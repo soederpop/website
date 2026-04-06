@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Closing Machine — Your Business, One System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0e14;
+    --bg-card: #0f1520;
+    --bg-card-hover: #141c2a;
+    --border: #182030;
+    --border-bright: #22303e;
+    --text: #b0bcc8;
+    --text-dim: #586878;
+    --text-bright: #dce4ec;
+    --forest: #2e8b57;
+    --forest-dim: #1a5234;
+    --forest-glow: rgba(46, 139, 87, 0.12);
+    --gold: #d0a030;
+    --gold-dim: #886820;
+    --gold-glow: rgba(208, 160, 48, 0.12);
+    --navy: #4060b0;
+    --navy-dim: #283c6a;
+    --navy-glow: rgba(64, 96, 176, 0.10);
+    --sand: #c0a880;
+    --sand-dim: #6e5e44;
+    --sand-glow: rgba(192, 168, 128, 0.10);
+    --slate: #607888;
+    --slate-dim: #3a4e5e;
+    --slate-glow: rgba(96, 120, 136, 0.10);
+    --rose: #b05060;
+    --rose-dim: #6a3038;
+    --rose-glow: rgba(176, 80, 96, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 120%;
+    height: 140%;
+    background:
+      radial-gradient(ellipse 700px 500px at 30% 40%, var(--forest-glow), transparent),
+      radial-gradient(ellipse 600px 400px at 70% 60%, var(--gold-glow), transparent);
+    opacity: 0.6;
+    animation: heroShift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroShift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(20px, -10px) scale(1.05); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--forest);
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 580px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    animation: fadeInUp 1.5s ease 1s both, gentleBob 3s ease-in-out infinite 2.5s;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes gentleBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── Sections ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--forest);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* ── Document Type Grid ── */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .doc-card {
+    background: var(--bg-card);
+    padding: 1.75rem;
+    transition: background 0.3s ease;
+    cursor: default;
+  }
+
+  .doc-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .doc-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+  }
+
+  .doc-tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Entry Points / Timeline ── */
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 2rem;
+  }
+
+  .timeline-step {
+    display: grid;
+    grid-template-columns: 100px 40px 1fr;
+    align-items: start;
+    gap: 0;
+    min-height: 110px;
+  }
+
+  .t-when {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    text-align: right;
+    padding-top: 0.3rem;
+    padding-right: 1rem;
+  }
+
+  .t-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .t-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-bright);
+  }
+
+  .t-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .t-dot.forest { background: var(--forest); box-shadow: 0 0 12px var(--forest-glow); }
+  .t-dot.gold { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+  .t-dot.navy { background: var(--navy); box-shadow: 0 0 12px var(--navy-glow); }
+  .t-dot.sand { background: var(--sand); box-shadow: 0 0 12px var(--sand-glow); }
+  .t-dot.rose { background: var(--rose); box-shadow: 0 0 12px var(--rose-glow); }
+
+  .t-body {
+    padding: 0 0 2rem 1.25rem;
+  }
+
+  .t-body h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+  }
+
+  .t-body p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── System Diagram ── */
+  .flow-section {
+    padding: 5rem 2rem 4rem;
+  }
+
+  .flow-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .system-diagram {
+    margin-top: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 25% 30%, var(--forest-glow), transparent),
+      radial-gradient(ellipse 500px 300px at 75% 70%, var(--gold-glow), transparent),
+      radial-gradient(ellipse 400px 400px at 50% 50%, var(--navy-glow), transparent);
+    opacity: 0.4;
+  }
+
+  .diagram-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .d-label {
+    width: 100%;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .d-node {
+    padding: 0.65rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    min-width: 105px;
+    transition: all 0.3s;
+  }
+
+  .d-node:hover { transform: scale(1.05); }
+
+  .d-node.forest { border-color: var(--forest-dim); color: var(--forest); background: rgba(46,139,87,0.06); }
+  .d-node.gold { border-color: var(--gold-dim); color: var(--gold); background: rgba(208,160,48,0.06); }
+  .d-node.navy { border-color: var(--navy-dim); color: var(--navy); background: rgba(64,96,176,0.06); }
+  .d-node.sand { border-color: var(--sand-dim); color: var(--sand); background: rgba(192,168,128,0.06); }
+  .d-node.slate { border-color: var(--slate-dim); color: var(--slate); background: rgba(96,120,136,0.06); }
+  .d-node.rose { border-color: var(--rose-dim); color: var(--rose); background: rgba(176,80,96,0.06); }
+
+  .d-node.big {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    min-width: 150px;
+  }
+
+  .d-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0.5rem 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    opacity: 0.4;
+  }
+
+  .d-arrows span {
+    display: inline-block;
+    animation: arrowPulse 2.5s ease-in-out infinite;
+  }
+
+  .d-arrows span:nth-child(2) { animation-delay: 0.2s; }
+  .d-arrows span:nth-child(3) { animation-delay: 0.4s; }
+  .d-arrows span:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ── Scenario Cards ── */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .scenario-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .scenario-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .scenario-card.leads::before { background: linear-gradient(90deg, var(--forest), var(--forest-dim)); }
+  .scenario-card.market::before { background: linear-gradient(90deg, var(--gold), var(--gold-dim)); }
+  .scenario-card.txn::before { background: linear-gradient(90deg, var(--navy), var(--navy-dim)); }
+  .scenario-card.tools::before { background: linear-gradient(90deg, var(--sand), var(--sand-dim)); }
+  .scenario-card.nurture::before { background: linear-gradient(90deg, var(--slate), var(--slate-dim)); }
+  .scenario-card.pipeline::before { background: linear-gradient(90deg, var(--rose), var(--rose-dim)); }
+
+  .scenario-timing {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .scenario-card.leads .scenario-timing { color: var(--forest); }
+  .scenario-card.market .scenario-timing { color: var(--gold); }
+  .scenario-card.txn .scenario-timing { color: var(--navy); }
+  .scenario-card.tools .scenario-timing { color: var(--sand); }
+  .scenario-card.nurture .scenario-timing { color: var(--slate); }
+  .scenario-card.pipeline .scenario-timing { color: var(--rose); }
+
+  .scenario-card h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-card p {
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .scenario-who {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 5px;
+  }
+
+  .scenario-who.auto {
+    color: var(--forest);
+    background: rgba(46,139,87,0.08);
+    border: 1px solid var(--forest-dim);
+  }
+
+  .scenario-who.you-review {
+    color: var(--gold);
+    background: rgba(208,160,48,0.08);
+    border: 1px solid var(--gold-dim);
+  }
+
+  .scenario-who.hands-free {
+    color: var(--navy);
+    background: rgba(64,96,176,0.08);
+    border: 1px solid var(--navy-dim);
+  }
+
+  /* ── Capability Map ── */
+  .cap-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .cap-group {
+    background: var(--bg-card);
+    padding: 1.5rem;
+  }
+
+  .cap-group h4 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+
+  .cap-group.crm h4 { color: var(--forest); }
+  .cap-group.listings h4 { color: var(--gold); }
+  .cap-group.transactions h4 { color: var(--navy); }
+  .cap-group.marketing h4 { color: var(--sand); }
+  .cap-group.comms h4 { color: var(--rose); }
+  .cap-group.reporting h4 { color: var(--slate); }
+
+  .cap-list {
+    list-style: none;
+  }
+
+  .cap-list li {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    transition: color 0.2s;
+    line-height: 1.5;
+  }
+
+  .cap-list li:hover { color: var(--text); }
+
+  .cap-list li::before {
+    content: '\2014';
+    margin-right: 0.5rem;
+    opacity: 0.3;
+  }
+
+  /* ── Comparison ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .compare-col {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .compare-col.before {
+    border-color: var(--rose-dim);
+  }
+
+  .compare-col.after {
+    border-color: var(--forest-dim);
+  }
+
+  .compare-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .compare-col.before .compare-label { color: var(--rose); }
+  .compare-col.after .compare-label { color: var(--forest); }
+
+  .compare-item {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.5;
+  }
+
+  .compare-item:last-child { border-bottom: none; }
+
+  .compare-col.before .compare-item::before {
+    content: '\00d7';
+    color: var(--rose-dim);
+    margin-right: 0.6rem;
+    font-weight: 600;
+  }
+
+  .compare-col.after .compare-item::before {
+    content: '\2192';
+    color: var(--forest);
+    margin-right: 0.6rem;
+  }
+
+  /* ── Appliance Section ── */
+  .appliance-box {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 2.5rem;
+    position: relative;
+  }
+
+  .appliance-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 500px 350px at 50% 50%, var(--forest-glow), transparent);
+    opacity: 0.5;
+  }
+
+  .appliance-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .appliance-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .appliance-icon {
+    width: 120px;
+    height: 80px;
+    border: 2px solid var(--forest-dim);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(46,139,87,0.04);
+    position: relative;
+  }
+
+  .appliance-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20%;
+    right: 20%;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .appliance-icon-inner {
+    font-size: 1.8rem;
+    color: var(--forest);
+    line-height: 1;
+  }
+
+  .appliance-pulse {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--forest);
+    animation: pulse 2s infinite;
+  }
+
+  .pulse-dot:nth-child(2) { animation-delay: 0.3s; background: var(--gold); }
+  .pulse-dot:nth-child(3) { animation-delay: 0.6s; background: var(--navy); }
+
+  .pulse-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .appliance-details h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    margin-bottom: 1rem;
+  }
+
+  .appliance-details p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .appliance-specs {
+    list-style: none;
+    margin-top: 1rem;
+  }
+
+  .appliance-specs li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .appliance-specs li span:last-child {
+    color: var(--forest);
+    font-weight: 500;
+  }
+
+  /* ── Sample Document ── */
+  .sample-doc {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+
+  .sample-doc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sample-doc pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  .sample-doc .field { color: var(--navy); }
+  .sample-doc .value { color: var(--gold); }
+  .sample-doc .heading { color: var(--text-bright); font-weight: 500; }
+  .sample-doc .note { color: var(--text-dim); }
+  .sample-doc .divider { color: var(--slate-dim); }
+
+  /* ── Pull Quote ── */
+  .pull-quote {
+    border-left: 2px solid var(--forest-dim);
+    padding: 1.5rem 2rem;
+    margin: 3rem 0;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-style: normal;
+    color: var(--text-dim);
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Lifecycle ── */
+  .lifecycle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2.5rem;
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-card);
+  }
+
+  .lifecycle-step {
+    padding: 0.6rem 1.1rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border-radius: 6px;
+    border: 1px solid;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .lifecycle-arrow {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    padding: 0 0.5rem;
+    opacity: 0.35;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer p {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .footer a {
+    color: var(--forest);
+    text-decoration: none;
+  }
+
+  /* ── Scroll Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .section { padding: 3.5rem 1.25rem; }
+    .timeline-step { grid-template-columns: 75px 30px 1fr; }
+    .appliance-content { grid-template-columns: 1fr; gap: 2rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .diagram-content { padding: 2rem 1rem; }
+    .d-node { min-width: 85px; font-size: 0.7rem; }
+    .lifecycle { gap: 0.25rem; }
+    .lifecycle-step { font-size: 0.68rem; padding: 0.45rem 0.75rem; }
+    .lifecycle-arrow { padding: 0 0.2rem; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-label">Closing Machine</div>
+    <h1>Your Business, <em>One System</em></h1>
+    <p class="hero-sub">
+      Structured notes drive an intelligent system that handles the admin chaos
+      — CRM data entry, listing paperwork, follow-up sequences, transaction coordination —
+      so you can focus on showing homes, building relationships, and closing deals.
+    </p>
+    <div class="scroll-hint">Scroll to see how it works</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 01 · YOUR RECORDS ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">01 — The Foundation</div>
+    <h2 class="section-title">Your Records Drive Everything</h2>
+    <p class="section-desc">
+      The system understands a handful of document types. Each one has a clear structure —
+      like a well-designed form, but written as natural notes. Fill in what you know,
+      and the system knows what to do with it.
+    </p>
+  </div>
+
+  <div class="doc-grid reveal">
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(46,139,87,0.12); color: var(--forest); font-size: 1.2rem;">&#9825;</div>
+      <h3>Client Profile</h3>
+      <p>Buyer or seller info, preferences, budget range, timeline, communication style, referral source, pre-approval status.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">buyer/seller</span>
+        <span class="doc-tag">budget</span>
+        <span class="doc-tag">timeline</span>
+        <span class="doc-tag">referral source</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(208,160,48,0.12); color: var(--gold); font-size: 1.2rem;">&#9962;</div>
+      <h3>Listing File</h3>
+      <p>Property details, photos, comps, pricing strategy, showing feedback, offer history, days on market, marketing plan.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">address</span>
+        <span class="doc-tag">price</span>
+        <span class="doc-tag">comps</span>
+        <span class="doc-tag">showing feedback</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(64,96,176,0.12); color: var(--navy); font-size: 1.2rem;">&#9998;</div>
+      <h3>Transaction</h3>
+      <p>Offer terms, inspection results, appraisal status, closing timeline, contingencies, lender info, title company contacts.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">under contract</span>
+        <span class="doc-tag">deadlines</span>
+        <span class="doc-tag">contingencies</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(192,168,128,0.12); color: var(--sand); font-size: 1.2rem;">&#128065;</div>
+      <h3>Showing Notes</h3>
+      <p>Client reactions, property pros and cons, follow-up actions, comparison notes, overall interest level.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">client linked</span>
+        <span class="doc-tag">property linked</span>
+        <span class="doc-tag">follow-up</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(96,120,136,0.12); color: var(--slate); font-size: 1.2rem;">&#9783;</div>
+      <h3>Market Watch</h3>
+      <p>Target neighborhoods, price alerts, days-on-market trends, new listings, sold comps, absorption rates.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">neighborhoods</span>
+        <span class="doc-tag">price alerts</span>
+        <span class="doc-tag">trends</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(176,80,96,0.12); color: var(--rose); font-size: 1.2rem;">&#9889;</div>
+      <h3>Task Request</h3>
+      <p>Anything that needs doing — follow up with the Johnsons, schedule an inspection, prepare a CMA, send a market update.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">priority</span>
+        <span class="doc-tag">due date</span>
+        <span class="doc-tag">auto-routed</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sample-doc reveal" style="margin-top:2rem;">
+    <div class="sample-doc-title">What a task request actually looks like</div>
+    <pre><span class="divider">---</span>
+<span class="field">priority</span>: <span class="value">high</span>
+<span class="field">due</span>: <span class="value">today</span>
+<span class="field">assigned</span>: <span class="value">system</span>
+<span class="divider">---</span>
+
+<span class="heading"># Follow Up with the Johnsons</span>
+
+<span class="note">They saw 412 Elm Street yesterday and loved the backyard.</span>
+<span class="note">Said they wanted to "sleep on it" but seemed very interested.</span>
+<span class="note">Send a follow-up text this afternoon with the property details</span>
+<span class="note">and ask if they want to see it again or make an offer.</span>
+<span class="note">If they say yes to an offer, pull comps and draft terms.</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 02 · HOW YOU INTERACT ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">02 — Talking to the System</div>
+    <h2 class="section-title">Use It However You Work</h2>
+    <p class="section-desc">
+      You don't change how you work. You're already moving fast —
+      between showings, in the car, at the desk. The system meets you
+      wherever you are.
+    </p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="timeline-step">
+      <div class="t-when">In the field</div>
+      <div class="t-line"><div class="t-dot forest"></div></div>
+      <div class="t-body">
+        <h4>Phone or Tablet</h4>
+        <p>Capture showing notes in the driveway. Approve offer terms from the car.
+        Quick-add a new lead between appointments. Works offline — syncs when you're back in range.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Driving</div>
+      <div class="t-line"><div class="t-dot rose"></div></div>
+      <div class="t-body">
+        <h4>Voice Commands</h4>
+        <p>"The Johnsons loved 412 Elm, especially the backyard. Schedule a second showing for Saturday
+        and pull comps for an offer." Hands-free, eyes on the road. Done before you park.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">At the desk</div>
+      <div class="t-line"><div class="t-dot navy"></div></div>
+      <div class="t-body">
+        <h4>Your Computer</h4>
+        <p>Deep CMA work, transaction management, pipeline reviews, listing presentations.
+        A full command center for the work that needs a screen and a keyboard.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Quick text</div>
+      <div class="t-line"><div class="t-dot gold"></div></div>
+      <div class="t-body">
+        <h4>Messaging</h4>
+        <p>Text the system: "What's the status on the Chen transaction?" It checks the file
+        and texts you back. Or forward a client text and it gets filed to the right profile automatically.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Automatic</div>
+      <div class="t-line"><div class="t-dot sand"></div></div>
+      <div class="t-body">
+        <h4>Scheduled Tasks</h4>
+        <p>Drip campaigns that actually drip. Market alerts to your buyers every morning.
+        Closing anniversary follow-ups. Monthly pipeline reviews queued for Monday at 7am.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 03 · THE COMMAND CENTER ═════════════════════════════ -->
+<section class="flow-section">
+  <div class="flow-container">
+    <div class="section-header reveal">
+      <div class="section-num">03 — How It All Connects</div>
+      <h2 class="section-title">The Command Center</h2>
+      <p class="section-desc">
+        Everything flows through one system. You put in what you know.
+        The coordinator handles what comes next. Everything gets documented.
+      </p>
+    </div>
+
+    <div class="system-diagram reveal">
+      <div class="diagram-bg"></div>
+      <div class="diagram-content">
+
+        <!-- You -->
+        <div class="diagram-row">
+          <div class="d-label">You — wherever you are</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node forest">Phone</div>
+          <div class="d-node forest">Voice</div>
+          <div class="d-node forest">Computer</div>
+          <div class="d-node forest">Text</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- Your Records -->
+        <div class="diagram-row">
+          <div class="d-label">Your Records — structured notes the system understands</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node gold">Clients</div>
+          <div class="d-node gold">Listings</div>
+          <div class="d-node gold big">Transactions</div>
+          <div class="d-node gold">Showings</div>
+          <div class="d-node gold">Market Data</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- The Coordinator -->
+        <div class="diagram-row">
+          <div class="d-label">The Coordinator — AI that understands real estate workflows</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node navy big">AI Coordinator</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- Actions -->
+        <div class="diagram-row">
+          <div class="d-label">Actions — what the system does for you</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node rose">Send Market Update</div>
+          <div class="d-node rose">Draft an Offer</div>
+          <div class="d-node rose">Schedule Showing</div>
+          <div class="d-node rose">Generate CMA</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- Documented Output -->
+        <div class="diagram-row">
+          <div class="d-label">Documented Output — everything filed, searchable, ready</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node sand">Listing Presentations</div>
+          <div class="d-node sand">CMAs</div>
+          <div class="d-node sand">Transaction Timelines</div>
+          <div class="d-node sand">Client Comms</div>
+          <div class="d-node sand">Pipeline Reports</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "Voice-dictate your showing notes from the car between appointments. By the time you walk
+      into the next one, the follow-up is already scheduled, the comparison notes are filed,
+      and your client got a text with the property details."
+      <cite>— That's what the system does</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 04 · A DAY IN THE LIFE ═════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">04 — A Day in the Life</div>
+    <h2 class="section-title">Real Situations, Handled</h2>
+    <p class="section-desc">
+      These aren't hypotheticals. Every agent deals with exactly these situations.
+      Here's how the system handles each one — so you can handle more closings.
+    </p>
+  </div>
+
+  <div class="scenario-grid reveal">
+    <div class="scenario-card leads">
+      <div class="scenario-timing">&#9679; 11:00 PM — While you're asleep</div>
+      <h4>New Lead Comes In</h4>
+      <p>Someone fills out your contact form at 11pm. The system creates a client profile,
+      sends a personalized response within 2 minutes, schedules a morning follow-up reminder,
+      and pulls up matching listings based on their criteria. You wake up to a warm lead
+      instead of a cold one.</p>
+      <div class="scenario-who auto">System handles it</div>
+    </div>
+
+    <div class="scenario-card market">
+      <div class="scenario-timing">&#9679; 9:15 AM — Price drop detected</div>
+      <h4>Price Drop Alert</h4>
+      <p>A property your buyer has been watching drops $25K. The system texts them immediately
+      with updated details and asks if they want to schedule a showing. If they say yes,
+      it coordinates with the listing agent and adds it to your calendar.</p>
+      <div class="scenario-who auto">System handles it</div>
+    </div>
+
+    <div class="scenario-card txn">
+      <div class="scenario-timing">&#9679; Ongoing — Every active deal</div>
+      <h4>Transaction Coordinator</h4>
+      <p>Once under contract, the system tracks every deadline: inspection period, appraisal deadline,
+      loan commitment date, closing date. Auto-reminds everyone involved — lender, title company,
+      other agent — at the right time. Nothing slips.</p>
+      <div class="scenario-who hands-free">Runs in the background</div>
+    </div>
+
+    <div class="scenario-card tools">
+      <div class="scenario-timing">&#9679; On demand — voice or text</div>
+      <h4>CMA on Demand</h4>
+      <p>Seller asks "what's my home worth?" You voice-command: "Generate CMA for 123 Oak Street."
+      The system pulls comps from your market data, adjusts for features and condition,
+      and generates a polished report you can send in minutes — not hours.</p>
+      <div class="scenario-who you-review">You review, system builds</div>
+    </div>
+
+    <div class="scenario-card nurture">
+      <div class="scenario-timing">&#8635; Automatic — every anniversary</div>
+      <h4>Annual Check-in</h4>
+      <p>The system knows the anniversary of every closing. Auto-generates a personalized touch:
+      home value update with current comps, a market newsletter, a just-checking-in message.
+      Your past clients remember you when their friends need an agent.</p>
+      <div class="scenario-who auto">System handles it</div>
+    </div>
+
+    <div class="scenario-card pipeline">
+      <div class="scenario-timing">&#8635; Every Monday at 7:00 AM</div>
+      <h4>Pipeline Review</h4>
+      <p>Monday morning summary: where every deal stands, what's closing this month,
+      which leads have gone cold, suggested follow-up actions for each.
+      One glance and you know exactly where to spend your week.</p>
+      <div class="scenario-who auto">System handles it</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 05 · CAPABILITIES ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">05 — What It Handles</div>
+    <h2 class="section-title">Built for Real Estate</h2>
+    <p class="section-desc">
+      Under the hood, the system has dozens of capabilities. Here's what matters to you —
+      grouped by the parts of your business they support.
+    </p>
+  </div>
+
+  <div class="cap-map reveal">
+    <div class="cap-group crm">
+      <h4>CRM &amp; Leads</h4>
+      <ul class="cap-list">
+        <li>Client profiling and segmentation</li>
+        <li>Lead capture from any source</li>
+        <li>Follow-up sequences that feel personal</li>
+        <li>Referral source tracking and ROI</li>
+        <li>Sphere of influence management</li>
+      </ul>
+    </div>
+
+    <div class="cap-group listings">
+      <h4>Listings</h4>
+      <ul class="cap-list">
+        <li>CMA generation from market data</li>
+        <li>Listing presentations and pricing</li>
+        <li>Showing coordination and feedback</li>
+        <li>Offer tracking and comparison</li>
+        <li>Days-on-market monitoring</li>
+      </ul>
+    </div>
+
+    <div class="cap-group transactions">
+      <h4>Transactions</h4>
+      <ul class="cap-list">
+        <li>Deadline tracking with auto-reminders</li>
+        <li>Document management and filing</li>
+        <li>Contingency monitoring</li>
+        <li>Vendor and lender coordination</li>
+        <li>Closing checklist automation</li>
+      </ul>
+    </div>
+
+    <div class="cap-group marketing">
+      <h4>Marketing</h4>
+      <ul class="cap-list">
+        <li>Drip campaign management</li>
+        <li>Personalized market updates</li>
+        <li>Social media content drafting</li>
+        <li>Open house promotion</li>
+        <li>Just-listed / just-sold announcements</li>
+      </ul>
+    </div>
+
+    <div class="cap-group comms">
+      <h4>Communication</h4>
+      <ul class="cap-list">
+        <li>Client texts and email follow-ups</li>
+        <li>Agent-to-agent coordination</li>
+        <li>Vendor and inspector scheduling</li>
+        <li>Lender status check-ins</li>
+        <li>Closing day coordination</li>
+      </ul>
+    </div>
+
+    <div class="cap-group reporting">
+      <h4>Reporting</h4>
+      <ul class="cap-list">
+        <li>Pipeline dashboard and deal stages</li>
+        <li>Commission tracking and projections</li>
+        <li>Lead source ROI analysis</li>
+        <li>Market trend summaries</li>
+        <li>Year-over-year performance</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 06 · BEFORE & AFTER ════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">06 — The Difference</div>
+    <h2 class="section-title">Before and After</h2>
+    <p class="section-desc">
+      You know the friction. You live with it every day.
+      Here's what changes.
+    </p>
+  </div>
+
+  <div class="compare-grid reveal">
+    <div class="compare-col before">
+      <div class="compare-label">How it works now</div>
+      <div class="compare-item">Manually entering every contact into your CRM after hours</div>
+      <div class="compare-item">Following up "when you remember" and losing leads to faster agents</div>
+      <div class="compare-item">Tracking 15 transaction deadlines on Post-it notes and calendar alerts</div>
+      <div class="compare-item">Writing the same market update email 50 times with slightly different names</div>
+      <div class="compare-item">Paying $500/month for CRM, transaction management, and drip tools</div>
+      <div class="compare-item">Past clients forget you exist until they see another agent's sign</div>
+    </div>
+
+    <div class="compare-col after">
+      <div class="compare-label">How it works with the system</div>
+      <div class="compare-item">Contacts auto-filed with full context from first interaction</div>
+      <div class="compare-item">Automated follow-up sequences that feel personal and never miss</div>
+      <div class="compare-item">Every deadline tracked with auto-reminders to all parties involved</div>
+      <div class="compare-item">One command generates personalized updates for your entire sphere</div>
+      <div class="compare-item">No monthly SaaS fees — one box replaces the whole software stack</div>
+      <div class="compare-item">Anniversary touches, value updates, and check-ins run automatically</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 07 · THE APPLIANCE ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">07 — The Appliance</div>
+    <h2 class="section-title">A Box in Your Home Office</h2>
+    <p class="section-desc">
+      This isn't another monthly subscription that someone else controls.
+      It's a small, quiet machine that sits in your office and runs everything.
+      Your relationships. Your data. Your pipeline. Not some CRM company's.
+    </p>
+  </div>
+
+  <div class="appliance-box reveal">
+    <div class="appliance-bg"></div>
+    <div class="appliance-content">
+      <div class="appliance-visual">
+        <div class="appliance-icon">
+          <div class="appliance-icon-inner">&#9618;</div>
+        </div>
+        <div class="appliance-pulse">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <span class="pulse-label">Always closing</span>
+        </div>
+      </div>
+      <div class="appliance-details">
+        <h3>Your Closing Machine</h3>
+        <p>
+          A compact device — roughly the size of a thick paperback — that sits on your desk
+          or behind your monitor. It runs the AI coordinator, stores your records, sends the messages,
+          generates the reports, and keeps your pipeline moving.
+        </p>
+        <p>
+          Your client data stays private — critical for fiduciary duty. No monthly CRM fees.
+          No per-agent licensing. Scale your team without scaling costs.
+          Plug it in, import your contacts, start closing.
+        </p>
+        <ul class="appliance-specs">
+          <li><span>Client data stays</span> <span>In your office</span></li>
+          <li><span>Monthly software fees</span> <span>$0</span></li>
+          <li><span>Per-agent licensing</span> <span>None — scale free</span></li>
+          <li><span>Setup</span> <span>Import contacts and go</span></li>
+          <li><span>AI processing</span> <span>On-device + cloud hybrid</span></li>
+          <li><span>Replaces</span> <span>CRM + TC + Drip tools</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 08 · THE VISION ════════════════════════════════════ -->
+<section class="section" style="padding-bottom: 2rem;">
+  <div class="section-header reveal">
+    <div class="section-num">08 — The Vision</div>
+    <h2 class="section-title">Show It. Speak It. It's Closed.</h2>
+    <p class="section-desc">
+      From the first inquiry to the closing table — and every referral after.
+      One system that turns activity into deals.
+    </p>
+  </div>
+
+  <div class="lifecycle reveal">
+    <div class="lifecycle-step" style="border-color: var(--forest-dim); color: var(--forest); background: rgba(46,139,87,0.06);">New Lead</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--forest-dim); color: var(--forest); background: rgba(46,139,87,0.06);">Consultation</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--gold-dim); color: var(--gold); background: rgba(208,160,48,0.06);">Showings</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--gold-dim); color: var(--gold); background: rgba(208,160,48,0.06);">Offer</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--navy-dim); color: var(--navy); background: rgba(64,96,176,0.06);">Under Contract</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--navy-dim); color: var(--navy); background: rgba(64,96,176,0.06);">Closing</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--sand-dim); color: var(--sand); background: rgba(192,168,128,0.06);">Relationship</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--rose-dim); color: var(--rose); background: rgba(176,80,96,0.06);">Referral</div>
+    <div class="lifecycle-arrow">&#8594;</div>
+    <div class="lifecycle-step" style="border-color: var(--forest-dim); color: var(--forest); background: rgba(46,139,87,0.06);">Repeat</div>
+  </div>
+
+  <div class="pull-quote reveal" style="margin-top: 3rem;">
+    A new lead becomes a qualified buyer. A showing becomes an offer. An offer becomes
+    a closing. A closing becomes a relationship. A relationship becomes a referral.
+    All through simple notes you write the way you already think — on your phone,
+    at your desk, or out loud between showings.
+    <cite>— One system, no juggling</cite>
+  </div>
+
+  <div class="pull-quote reveal" style="border-left-color: var(--gold-dim);">
+    The real value isn't the technology. It's the deals that don't slip away.
+    The follow-ups that never get forgotten. The pipeline that runs itself while
+    you're doing what you do best — sitting across the table, building trust,
+    and getting signatures. Every hour you're not doing admin is an hour
+    you're closing.
+    <cite>— What it means for your business</cite>
+  </div>
+
+  <div class="sample-doc reveal">
+    <div class="sample-doc-title">How the whole cycle works</div>
+    <pre>
+<span class="heading">You say:</span>     <span class="value">"New lead. Sarah and Mike Torres. Looking for a 4-bed</span>
+<span class="value">              in Westlake under 650. Pre-approved with First National.</span>
+<span class="value">              Sarah's sister referred them. They want to move by August."</span>
+
+<span class="heading">The system:</span>  <span class="note">Creates client profiles for Sarah and Mike</span>
+              <span class="note">Tags the referral source (sister's name from your contacts)</span>
+              <span class="note">Pulls 12 active listings matching their criteria</span>
+              <span class="note">Drafts a welcome text with the top 5 properties</span>
+              <span class="note">Sets up a market watch for Westlake under 650K</span>
+              <span class="note">Schedules a follow-up for tomorrow morning</span>
+
+<span class="heading">You review:</span>  <span class="value">Tweak the property picks. Approve the text. Done.</span>
+
+<span class="heading">The system:</span>  <span class="note">Sends the personalized text to Sarah</span>
+              <span class="note">Adds the Torres family to your Monday pipeline report</span>
+              <span class="note">Monitors price changes on all 12 matching listings</span>
+              <span class="note">Tracks the timeline: must close by August</span>
+              <span class="note">Queues showing coordination when they pick favorites</span></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═════════════════════════════════════════ -->
+<div class="footer">
+  <p>Soederpop Systems — <a href="https://www.soederpop.com">soederpop.com</a></p>
+  <p style="margin-top:0.5rem; font-size:0.6rem; opacity:0.5;">Version: Closing Machine</p>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Agentic Loop v2 — Vision to Execution Pipeline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --bg-card: #111118;
+    --bg-card-hover: #16161f;
+    --border: #1e1e2a;
+    --border-bright: #2a2a3a;
+    --text: #c8c8d4;
+    --text-dim: #6a6a7a;
+    --text-bright: #e8e8f0;
+    --accent-amber: #f0a830;
+    --accent-amber-dim: #a07020;
+    --accent-cyan: #40c8e0;
+    --accent-cyan-dim: #206878;
+    --accent-rose: #e04070;
+    --accent-rose-dim: #802040;
+    --accent-lime: #80d040;
+    --accent-lime-dim: #406820;
+    --accent-violet: #a060f0;
+    --accent-violet-dim: #503080;
+    --accent-blue: #4080f0;
+    --accent-blue-dim: #203868;
+    --glow-amber: rgba(240, 168, 48, 0.15);
+    --glow-cyan: rgba(64, 200, 224, 0.12);
+    --glow-rose: rgba(224, 64, 112, 0.12);
+    --glow-violet: rgba(160, 96, 240, 0.12);
+    --glow-blue: rgba(64, 128, 240, 0.12);
+    --glow-lime: rgba(128, 208, 64, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow-amber) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    animation: drift 20s ease-in-out infinite;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow-violet) 0%, transparent 70%);
+    bottom: -100px;
+    left: -150px;
+    animation: drift 25s ease-in-out infinite reverse;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -30px) scale(1.05); }
+    66% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 900px;
+  }
+
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    background: linear-gradient(135deg, var(--accent-amber), var(--accent-violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text-dim);
+    max-width: 640px;
+    margin: 0 auto 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .hero-ooda {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
+    margin-bottom: 3rem;
+  }
+
+  .ooda-step {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid;
+    transition: all 0.3s;
+  }
+
+  .ooda-step:hover { transform: translateY(-2px); }
+
+  .ooda-step.observe { border-color: var(--accent-cyan-dim); color: var(--accent-cyan); background: rgba(64,200,224,0.06); }
+  .ooda-step.orient { border-color: var(--accent-amber-dim); color: var(--accent-amber); background: rgba(240,168,48,0.06); }
+  .ooda-step.decide { border-color: var(--accent-violet-dim); color: var(--accent-violet); background: rgba(160,96,240,0.06); }
+  .ooda-step.act { border-color: var(--accent-rose-dim); color: var(--accent-rose); background: rgba(224,64,112,0.06); }
+
+  .ooda-arrow {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    opacity: 0.4;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1s, pulse 2s ease-in-out infinite 1.8s;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--text-dim), transparent);
+    margin: 0.75rem auto 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Sections ── */
+  .section {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .section-header {
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 640px;
+  }
+
+  /* ── Pipeline ── */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .pipeline-stage {
+    display: grid;
+    grid-template-columns: 200px 60px 1fr;
+    align-items: start;
+    min-height: 160px;
+  }
+
+  .stage-label {
+    text-align: right;
+    padding-top: 0.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .stage-label h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  .stage-label .stage-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .stage-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .stage-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-bright);
+  }
+
+  .stage-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.6rem;
+    flex-shrink: 0;
+    border: 2px solid;
+  }
+
+  .stage-dot.amber { background: rgba(240,168,48,0.2); border-color: var(--accent-amber); box-shadow: 0 0 16px var(--glow-amber); }
+  .stage-dot.cyan { background: rgba(64,200,224,0.2); border-color: var(--accent-cyan); box-shadow: 0 0 16px var(--glow-cyan); }
+  .stage-dot.violet { background: rgba(160,96,240,0.2); border-color: var(--accent-violet); box-shadow: 0 0 16px var(--glow-violet); }
+  .stage-dot.rose { background: rgba(224,64,112,0.2); border-color: var(--accent-rose); box-shadow: 0 0 16px var(--glow-rose); }
+  .stage-dot.blue { background: rgba(64,128,240,0.2); border-color: var(--accent-blue); box-shadow: 0 0 16px var(--glow-blue); }
+
+  .stage-content {
+    padding: 0.25rem 0 2.5rem 1.5rem;
+  }
+
+  .stage-content p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 540px;
+  }
+
+  .stage-content p strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .stage-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .stage-example {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  /* ── The Loop Diagram ── */
+  .loop-section {
+    padding: 6rem 2rem;
+    position: relative;
+  }
+
+  .loop-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .loop-diagram {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .loop-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 500px 400px at 25% 30%, var(--glow-amber), transparent),
+      radial-gradient(ellipse 500px 400px at 75% 70%, var(--glow-violet), transparent),
+      radial-gradient(ellipse 400px 300px at 50% 50%, rgba(224,64,112,0.06), transparent);
+    opacity: 0.4;
+  }
+
+  .loop-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2.5rem;
+  }
+
+  /* The circular OODA layout */
+  .ooda-ring {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .ooda-ring::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--border-bright);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  .ooda-ring::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow-amber), transparent);
+    animation: corePulse 3s ease-in-out infinite;
+  }
+
+  @keyframes corePulse {
+    0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
+  }
+
+  .ooda-quadrant {
+    padding: 2rem;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ooda-quadrant:hover {
+    border-color: var(--border-bright);
+    background: var(--bg-card-hover);
+  }
+
+  .ooda-quadrant::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .ooda-quadrant.observe::before { background: linear-gradient(90deg, var(--accent-cyan), transparent); }
+  .ooda-quadrant.orient::before { background: linear-gradient(90deg, var(--accent-amber), transparent); }
+  .ooda-quadrant.decide::before { background: linear-gradient(90deg, var(--accent-violet), transparent); }
+  .ooda-quadrant.act::before { background: linear-gradient(90deg, var(--accent-rose), transparent); }
+
+  .quad-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .quad-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .observe .quad-icon { background: rgba(64,200,224,0.12); color: var(--accent-cyan); }
+  .orient .quad-icon { background: rgba(240,168,48,0.12); color: var(--accent-amber); }
+  .decide .quad-icon { background: rgba(160,96,240,0.12); color: var(--accent-violet); }
+  .act .quad-icon { background: rgba(224,64,112,0.12); color: var(--accent-rose); }
+
+  .quad-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+  }
+
+  .observe .quad-title { color: var(--accent-cyan); }
+  .orient .quad-title { color: var(--accent-amber); }
+  .decide .quad-title { color: var(--accent-violet); }
+  .act .quad-title { color: var(--accent-rose); }
+
+  .quad-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 0.15rem;
+  }
+
+  .quad-body {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .quad-models {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .quad-model {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid;
+    font-weight: 500;
+  }
+
+  .observe .quad-model { border-color: var(--accent-cyan-dim); color: var(--accent-cyan); background: rgba(64,200,224,0.06); }
+  .orient .quad-model { border-color: var(--accent-amber-dim); color: var(--accent-amber); background: rgba(240,168,48,0.06); }
+  .decide .quad-model { border-color: var(--accent-violet-dim); color: var(--accent-violet); background: rgba(160,96,240,0.06); }
+  .act .quad-model { border-color: var(--accent-rose-dim); color: var(--accent-rose); background: rgba(224,64,112,0.06); }
+
+  /* Center label */
+  .loop-center-label {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+  }
+
+  .loop-center-label strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ── Arrows between quadrants ── */
+  .loop-arrows {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 260px;
+    height: 260px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .loop-arrows svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── Pipeline Detail Cards ── */
+  .pipeline-cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .p-card {
+    background: var(--bg-card);
+    padding: 1.75rem 1.25rem;
+    transition: background 0.3s ease;
+    position: relative;
+  }
+
+  .p-card:hover {
+    background: var(--bg-card-hover);
+    z-index: 1;
+  }
+
+  .p-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .p-card:nth-child(1)::before { background: var(--accent-amber); }
+  .p-card:nth-child(2)::before { background: var(--accent-lime); }
+  .p-card:nth-child(3)::before { background: var(--accent-cyan); }
+  .p-card:nth-child(4)::before { background: var(--accent-violet); }
+  .p-card:nth-child(5)::before { background: var(--accent-rose); }
+
+  .p-card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.85rem;
+  }
+
+  .p-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .p-card p {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .p-card .p-arrow {
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    z-index: 2;
+    opacity: 0.4;
+  }
+
+  .p-card:nth-child(1) .p-arrow { color: var(--accent-amber); }
+  .p-card:nth-child(2) .p-arrow { color: var(--accent-lime); }
+  .p-card:nth-child(3) .p-arrow { color: var(--accent-cyan); }
+  .p-card:nth-child(4) .p-arrow { color: var(--accent-violet); }
+
+  /* ── Plays & Tasks Section ── */
+  .executor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .executor-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .executor-card:hover { border-color: var(--border-bright); }
+
+  .executor-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .executor-card.play::before { background: linear-gradient(90deg, var(--accent-rose), var(--accent-amber)); }
+  .executor-card.task::before { background: linear-gradient(90deg, var(--accent-violet), var(--accent-blue)); }
+
+  .executor-type {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .executor-card.play .executor-type { color: var(--accent-rose); }
+  .executor-card.task .executor-type { color: var(--accent-violet); }
+
+  .executor-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--text-bright);
+    margin-bottom: 0.75rem;
+  }
+
+  .executor-card > p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+  }
+
+  .executor-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .ex-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+  }
+
+  .ex-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-bright);
+  }
+
+  .ex-desc {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .ex-schedule {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.58rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .play .ex-schedule { background: rgba(224,64,112,0.1); color: var(--accent-rose); border: 1px solid var(--accent-rose-dim); }
+  .task .ex-schedule { background: rgba(160,96,240,0.1); color: var(--accent-violet); border: 1px solid var(--accent-violet-dim); }
+
+  /* ── Reports / Feedback ── */
+  .feedback-flow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .fb-node {
+    padding: 0.8rem 1.4rem;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    transition: all 0.3s;
+    min-width: 120px;
+  }
+
+  .fb-node:hover { transform: translateY(-2px); }
+
+  .fb-node.play-n { border-color: var(--accent-rose-dim); color: var(--accent-rose); background: rgba(224,64,112,0.06); }
+  .fb-node.task-n { border-color: var(--accent-violet-dim); color: var(--accent-violet); background: rgba(160,96,240,0.06); }
+  .fb-node.report-n { border-color: var(--accent-cyan-dim); color: var(--accent-cyan); background: rgba(64,200,224,0.06); }
+  .fb-node.goal-n { border-color: var(--accent-amber-dim); color: var(--accent-amber); background: rgba(240,168,48,0.06); }
+  .fb-node.idea-n { border-color: var(--accent-lime-dim); color: var(--accent-lime); background: rgba(128,208,64,0.06); }
+
+  .fb-arrow {
+    color: var(--text-dim);
+    font-size: 1rem;
+    opacity: 0.3;
+    animation: arrowPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.6; }
+  }
+
+  /* ── Big System Diagram ── */
+  .system-diagram {
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 30%, var(--glow-amber), transparent),
+      radial-gradient(ellipse 500px 300px at 80% 70%, var(--glow-violet), transparent),
+      radial-gradient(ellipse 400px 400px at 50% 50%, var(--glow-rose), transparent);
+    opacity: 0.25;
+  }
+
+  .diagram-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .diagram-row:last-child { margin-bottom: 0; }
+
+  .d-label {
+    width: 100%;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .d-node {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    min-width: 100px;
+    transition: all 0.3s;
+  }
+
+  .d-node:hover { transform: scale(1.05); }
+
+  .d-node.amber { border-color: var(--accent-amber-dim); color: var(--accent-amber); background: rgba(240,168,48,0.06); }
+  .d-node.cyan { border-color: var(--accent-cyan-dim); color: var(--accent-cyan); background: rgba(64,200,224,0.06); }
+  .d-node.rose { border-color: var(--accent-rose-dim); color: var(--accent-rose); background: rgba(224,64,112,0.06); }
+  .d-node.violet { border-color: var(--accent-violet-dim); color: var(--accent-violet); background: rgba(160,96,240,0.06); }
+  .d-node.lime { border-color: var(--accent-lime-dim); color: var(--accent-lime); background: rgba(128,208,64,0.06); }
+  .d-node.blue { border-color: var(--accent-blue-dim); color: var(--accent-blue); background: rgba(64,128,240,0.06); }
+
+  .d-node.big {
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 160px;
+  }
+
+  .d-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0.75rem 0;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    opacity: 0.4;
+  }
+
+  .d-arrows span {
+    display: inline-block;
+    animation: arrowPulse 2s ease-in-out infinite;
+  }
+
+  .d-arrows span:nth-child(2) { animation-delay: 0.15s; }
+  .d-arrows span:nth-child(3) { animation-delay: 0.3s; }
+
+  /* ── Code block ── */
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.65;
+    color: var(--text-dim);
+  }
+
+  .code-block .kw { color: var(--accent-rose); }
+  .code-block .fn { color: var(--accent-amber); }
+  .code-block .str { color: var(--accent-lime); }
+  .code-block .cmt { color: #444455; font-style: italic; }
+  .code-block .type { color: var(--accent-cyan); }
+  .code-block .var { color: var(--text); }
+
+  /* ── Pull Quote ── */
+  .pull-quote {
+    border-left: 2px solid var(--accent-amber-dim);
+    padding: 1.5rem 2rem;
+    margin: 3rem 0;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-style: normal;
+    color: var(--text-dim);
+    margin-top: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Comparison Table ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    font-size: 0.82rem;
+  }
+
+  .compare-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border-bright);
+    color: var(--text-dim);
+  }
+
+  .compare-table td {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+
+  .compare-table tr:hover td {
+    background: rgba(255,255,255,0.015);
+  }
+
+  .compare-table .label-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .compare-table .ooda-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Scroll Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .pipeline-cards { grid-template-columns: 1fr; }
+    .p-card .p-arrow { display: none; }
+    .ooda-ring { grid-template-columns: 1fr; }
+    .executor-grid { grid-template-columns: 1fr; }
+    .loop-arrows { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    .section { padding: 4rem 1.25rem; }
+    .pipeline-stage { grid-template-columns: 1fr; gap: 0.5rem; min-height: auto; }
+    .stage-label { text-align: left; padding-right: 0; }
+    .stage-line { display: none; }
+    .stage-content { padding-left: 0; }
+    .diagram-content { padding: 2rem 1rem; }
+    .d-node { min-width: 80px; font-size: 0.6rem; }
+    .feedback-flow { flex-direction: column; align-items: center; }
+    .fb-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ HERO ════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-label">Soederpop Systems Architecture v2</div>
+    <h1>The <em>Agentic</em> Loop</h1>
+    <p class="hero-sub">
+      A continuous feedback cycle that turns vision into running software.
+      Structured writing flows through a pipeline of goals, ideas, projects, and plans
+      &mdash; while plays, tasks, and reports close the loop.
+    </p>
+    <div class="hero-ooda">
+      <div class="ooda-step observe">Observe</div>
+      <div class="ooda-arrow">&rarr;</div>
+      <div class="ooda-step orient">Orient</div>
+      <div class="ooda-arrow">&rarr;</div>
+      <div class="ooda-step decide">Decide</div>
+      <div class="ooda-arrow">&rarr;</div>
+      <div class="ooda-step act">Act</div>
+      <div class="ooda-arrow">&rarr;</div>
+      <div class="ooda-step observe" style="opacity:0.5;">Observe...</div>
+    </div>
+    <div class="scroll-hint">Scroll to explore</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 01 · THE PIPELINE ══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num" style="color: var(--accent-amber-dim);">01 &mdash; The Pipeline</div>
+    <h2 class="section-title">Vision to Execution</h2>
+    <p class="section-desc">
+      Everything starts as a thought. The pipeline narrows intent into executable work,
+      one level at a time &mdash; from the abstract to the concrete.
+    </p>
+  </div>
+
+  <div class="pipeline reveal">
+    <div class="pipeline-stage">
+      <div class="stage-label">
+        <h3 style="color: var(--accent-amber);">Vision</h3>
+        <span class="stage-tag" style="color: var(--accent-amber-dim);">The North Star</span>
+      </div>
+      <div class="stage-line"><div class="stage-dot amber"></div></div>
+      <div class="stage-content">
+        <p><strong>What am I building and why?</strong> A single document that captures the overarching purpose.
+        Everything downstream exists to serve this. It rarely changes, but everything references it.</p>
+        <div class="stage-examples">
+          <span class="stage-example">docs/vision.md</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline-stage">
+      <div class="stage-label">
+        <h3 style="color: var(--accent-lime);">Goals</h3>
+        <span class="stage-tag" style="color: var(--accent-lime-dim);">Measurable Outcomes</span>
+      </div>
+      <div class="stage-line"><div class="stage-dot" style="background: rgba(128,208,64,0.2); border-color: var(--accent-lime); box-shadow: 0 0 16px var(--glow-lime);"></div></div>
+      <div class="stage-content">
+        <p><strong>Concrete targets with success criteria.</strong> Each goal has a horizon (short/medium/long),
+        a motivation section, and measurable success criteria. Goals keep ideas honest.</p>
+        <div class="stage-examples">
+          <span class="stage-example">horizon: short | medium | long</span>
+          <span class="stage-example">&sect; Success Criteria</span>
+          <span class="stage-example">&sect; Motivation</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline-stage">
+      <div class="stage-label">
+        <h3 style="color: var(--accent-cyan);">Ideas</h3>
+        <span class="stage-tag" style="color: var(--accent-cyan-dim);">Exploration Space</span>
+      </div>
+      <div class="stage-line"><div class="stage-dot cyan"></div></div>
+      <div class="stage-content">
+        <p><strong>Raw sparks that evolve through research.</strong> Ideas are aligned to goals and progress
+        through stages: <strong>spark</strong> &rarr; <strong>exploring</strong> &rarr; <strong>ready</strong> &rarr; <strong>promoted</strong>.
+        A promoted idea becomes a project.</p>
+        <div class="stage-examples">
+          <span class="stage-example">spark</span>
+          <span class="stage-example">exploring</span>
+          <span class="stage-example">ready</span>
+          <span class="stage-example">parked</span>
+          <span class="stage-example">promoted</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline-stage">
+      <div class="stage-label">
+        <h3 style="color: var(--accent-violet);">Projects</h3>
+        <span class="stage-tag" style="color: var(--accent-violet-dim);">Multi-Plan Efforts</span>
+      </div>
+      <div class="stage-line"><div class="stage-dot violet"></div></div>
+      <div class="stage-content">
+        <p><strong>Orchestrate sequential (or parallel) plans.</strong> A project is a home document
+        with an execution section &mdash; an ordered list of plan links. The project builder walks
+        through them one by one, dispatching each to an agent.</p>
+        <div class="stage-examples">
+          <span class="stage-example">status: draft &rarr; approved &rarr; building &rarr; completed</span>
+          <span class="stage-example">&sect; Execution Order</span>
+          <span class="stage-example">&larr; hasMany Plans</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline-stage">
+      <div class="stage-label">
+        <h3 style="color: var(--accent-rose);">Plans</h3>
+        <span class="stage-tag" style="color: var(--accent-rose-dim);">Agent-Executable</span>
+      </div>
+      <div class="stage-line"><div class="stage-dot rose"></div></div>
+      <div class="stage-content">
+        <p><strong>The atomic unit of AI work.</strong> A plan is a Claude Code /plan-style document with
+        references, a test plan, and approval status. Approved plans get picked up and executed.
+        Cost, turns, and tool calls are recorded on completion.</p>
+        <div class="stage-examples">
+          <span class="stage-example">status: pending &rarr; approved &rarr; completed</span>
+          <span class="stage-example">&sect; References</span>
+          <span class="stage-example">&sect; Test Plan</span>
+          <span class="stage-example">costUsd &middot; turns &middot; toolCalls</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block reveal" style="margin-top: 2rem;">
+    <pre><span class="cmt">// The pipeline, as a relationship graph</span>
+<span class="type">Vision</span>
+  <span class="kw">&rarr;</span> <span class="type">Goal</span>(<span class="str">"Ship the AI appliance product"</span>)
+    <span class="kw">&rarr;</span> <span class="type">Idea</span>(<span class="str">"Voice assistant interchange format"</span>)    <span class="cmt">// spark &rarr; exploring &rarr; promoted</span>
+      <span class="kw">&rarr;</span> <span class="type">Project</span>(<span class="str">"Assistant Presenter"</span>)
+        <span class="kw">&rarr;</span> <span class="type">Plan</span>(<span class="str">"01-presenter-mvp"</span>)                  <span class="cmt">// completed ($0.42, 23 turns)</span>
+        <span class="kw">&rarr;</span> <span class="type">Plan</span>(<span class="str">"02-direct-containerlink"</span>)            <span class="cmt">// approved, queued</span></pre>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 02 · THE FEEDBACK LOOP ═══════════════════════════════════ -->
+<section class="loop-section">
+  <div class="loop-container">
+    <div class="section-header reveal">
+      <div class="section-num" style="color: var(--accent-rose-dim);">02 &mdash; The Feedback Loop</div>
+      <h2 class="section-title">OODA for Agentic Systems</h2>
+      <p class="section-desc">
+        The pipeline is linear. But real work is a loop. Plays execute, tasks complete, reports
+        capture what happened &mdash; and that intelligence feeds back into the next cycle of decisions.
+        Boyd's OODA loop, powered by markdown and AI agents.
+      </p>
+    </div>
+
+    <div class="loop-diagram reveal">
+      <div class="loop-bg"></div>
+      <div class="loop-content">
+        <div class="ooda-ring">
+          <!-- Top-left: Observe -->
+          <div class="ooda-quadrant observe">
+            <div class="quad-header">
+              <div class="quad-icon">O</div>
+              <div>
+                <div class="quad-title">Observe</div>
+                <span class="quad-subtitle">Gather intelligence</span>
+              </div>
+            </div>
+            <div class="quad-body">
+              Reports and task outputs flow back into the system. What got built? What failed?
+              What's the status of goals? Agents write reports; you read them on your phone.
+            </div>
+            <div class="quad-models">
+              <span class="quad-model">Report</span>
+              <span class="quad-model">Task Output</span>
+              <span class="quad-model">Plan Metrics</span>
+            </div>
+          </div>
+
+          <!-- Top-right: Orient -->
+          <div class="ooda-quadrant orient">
+            <div class="quad-header">
+              <div class="quad-icon">O</div>
+              <div>
+                <div class="quad-title">Orient</div>
+                <span class="quad-subtitle">Align to vision</span>
+              </div>
+            </div>
+            <div class="quad-body">
+              How does what we've learned change the picture? Review goals against reality.
+              Reprioritize. Park ideas that aren't working. Spot gaps in the strategy.
+            </div>
+            <div class="quad-models">
+              <span class="quad-model">Vision</span>
+              <span class="quad-model">Goal</span>
+              <span class="quad-model">Idea Status</span>
+            </div>
+          </div>
+
+          <!-- Bottom-left: Decide -->
+          <div class="ooda-quadrant decide">
+            <div class="quad-header">
+              <div class="quad-icon">D</div>
+              <div>
+                <div class="quad-title">Decide</div>
+                <span class="quad-subtitle">Promote &amp; approve</span>
+              </div>
+            </div>
+            <div class="quad-body">
+              Promote an idea to a project. Approve a plan for execution. Create a new task
+              or play. This is the human-in-the-loop moment &mdash; the approval gate.
+            </div>
+            <div class="quad-models">
+              <span class="quad-model">Idea &rarr; Project</span>
+              <span class="quad-model">Plan Approval</span>
+              <span class="quad-model">New Play/Task</span>
+            </div>
+          </div>
+
+          <!-- Bottom-right: Act -->
+          <div class="ooda-quadrant act">
+            <div class="quad-header">
+              <div class="quad-icon">A</div>
+              <div>
+                <div class="quad-title">Act</div>
+                <span class="quad-subtitle">Execute with agents</span>
+              </div>
+            </div>
+            <div class="quad-body">
+              Plays run on schedule. Tasks fire once. The project builder walks through plans.
+              Agents read the prompt, use the container, build software, record results.
+            </div>
+            <div class="quad-models">
+              <span class="quad-model">Play</span>
+              <span class="quad-model">Task</span>
+              <span class="quad-model">Project Builder</span>
+            </div>
+          </div>
+
+          <!-- Center arrows SVG -->
+          <div class="loop-arrows">
+            <svg viewBox="0 0 260 260" fill="none">
+              <!-- Observe -> Orient (top) -->
+              <path d="M 80 60 Q 130 40 180 60" stroke="rgba(200,200,212,0.15)" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+              <!-- Orient -> Act (right) -->
+              <path d="M 200 80 Q 220 130 200 180" stroke="rgba(200,200,212,0.15)" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+              <!-- Act -> Decide (bottom) -->
+              <path d="M 180 200 Q 130 220 80 200" stroke="rgba(200,200,212,0.15)" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+              <!-- Decide -> Observe (left) -->
+              <path d="M 60 180 Q 40 130 60 80" stroke="rgba(200,200,212,0.15)" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+              <defs>
+                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="rgba(200,200,212,0.25)"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <div class="loop-center-label">
+          <strong>Contentbase</strong> &mdash; structured markdown is the shared state between every phase
+        </div>
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      Observe what agents built. Orient against your goals. Decide what to promote or approve.
+      Act through plays, tasks, and the project builder. Repeat. Every cycle, the system
+      gets smarter and the gap between intent and reality shrinks.
+      <cite>&mdash; The agentic OODA loop</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 03 · PLAYS & TASKS ════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num" style="color: var(--accent-violet-dim);">03 &mdash; The Executors</div>
+    <h2 class="section-title">Plays &amp; Tasks</h2>
+    <p class="section-desc">
+      Two kinds of executable prompts drive the Act phase.
+      Plays repeat on a schedule &mdash; they're the system's habits.
+      Tasks fire once &mdash; they're the system's errands.
+    </p>
+  </div>
+
+  <div class="executor-grid reveal">
+    <div class="executor-card play">
+      <div class="executor-type">Play &middot; Repeatable</div>
+      <h3>The System's Habits</h3>
+      <p>Plays are markdown prompts that run on a schedule. They're the things the system does
+      every day, every hour, at the beginning of the day, at the end. Like habits, they compound.</p>
+      <div class="executor-examples">
+        <div class="ex-item">
+          <span class="ex-name">build-an-approved-project</span>
+          <span class="ex-desc">Pick up the next approved project and execute its plans</span>
+          <span class="ex-schedule">every-half-hour</span>
+        </div>
+        <div class="ex-item">
+          <span class="ex-name">begin-exploring-one-of-the-spark-ideas</span>
+          <span class="ex-desc">Find a spark idea, research it, evolve to exploring</span>
+          <span class="ex-schedule">beginning-of-day</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="executor-card task">
+      <div class="executor-type">Task &middot; One-off</div>
+      <h3>The System's Errands</h3>
+      <p>Tasks are markdown prompts that run once and get marked complete. Small fixes, investigations,
+      one-off reports, documentation updates. They clear the backlog.</p>
+      <div class="executor-examples">
+        <div class="ex-item">
+          <span class="ex-name">investigate-session-memory</span>
+          <span class="ex-desc">Debug why session memory isn't persisting</span>
+          <span class="ex-schedule">one-off</span>
+        </div>
+        <div class="ex-item">
+          <span class="ex-name">import-gws-cli-recipes</span>
+          <span class="ex-desc">Download and organize Google Workspace docs</span>
+          <span class="ex-schedule">one-off</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block reveal">
+    <pre><span class="cmt">// Play document anatomy (frontmatter + prompt body)</span>
+<span class="kw">---</span>
+<span class="type">agent</span>: <span class="str">claude</span>
+<span class="type">schedule</span>: <span class="str">every-half-hour</span>
+<span class="type">tags</span>: [<span class="str">building</span>, <span class="str">projects</span>]
+<span class="kw">---</span>
+
+<span class="cmt"># Build an Approved Project</span>
+
+<span class="var">Query contentbase for projects with status "approved".</span>
+<span class="var">Pick the oldest one. Find its next unbuilt plan.</span>
+<span class="var">Execute the plan. Record cost and completion status.</span>
+<span class="var">If all plans are done, mark the project completed.</span>
+
+<span class="cmt">## Conditions</span>
+
+<span class="kw">```ts</span>
+<span class="cmt">// Only run if there's an approved project waiting</span>
+<span class="kw">const</span> <span class="var">projects</span> = <span class="kw">await</span> <span class="var">docs</span>.<span class="fn">query</span>(<span class="var">docs</span>.<span class="var">models</span>.<span class="type">Project</span>)
+  .<span class="fn">where</span>(<span class="str">"meta.status"</span>, <span class="str">"approved"</span>).<span class="fn">fetchAll</span>()
+<span class="kw">return</span> <span class="var">projects</span>.<span class="var">length</span> > <span class="str">0</span>
+<span class="kw">```</span></pre>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 04 · REPORTS & FEEDBACK ═══════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num" style="color: var(--accent-cyan-dim);">04 &mdash; Closing the Loop</div>
+    <h2 class="section-title">Reports as Intelligence</h2>
+    <p class="section-desc">
+      Every action produces signal. Reports capture what happened, what it cost,
+      what changed. They're the Observe phase &mdash; the raw material for the next decision cycle.
+    </p>
+  </div>
+
+  <div class="feedback-flow reveal">
+    <div class="fb-node play-n">Play executes</div>
+    <div class="fb-arrow">&rarr;</div>
+    <div class="fb-node report-n">Report generated</div>
+    <div class="fb-arrow">&rarr;</div>
+    <div class="fb-node goal-n">Goals re-evaluated</div>
+    <div class="fb-arrow">&rarr;</div>
+    <div class="fb-node idea-n">Ideas reprioritized</div>
+    <div class="fb-arrow">&rarr;</div>
+    <div class="fb-node play-n">Next cycle</div>
+  </div>
+
+  <div class="compare-table reveal" style="margin-top: 3rem; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;">
+    <table class="compare-table" style="margin-top: 0;">
+      <thead>
+        <tr>
+          <th>OODA Phase</th>
+          <th>Soederpop Model</th>
+          <th>What Happens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="ooda-cell" style="color: var(--accent-cyan);">Observe</td>
+          <td class="label-cell">Report, Plan Metrics</td>
+          <td>Agents write reports. Plans record cost, turns, tool calls, completion time. You read the results.</td>
+        </tr>
+        <tr>
+          <td class="ooda-cell" style="color: var(--accent-amber);">Orient</td>
+          <td class="label-cell">Vision, Goal</td>
+          <td>Review observations against the vision. Are goals on track? Which ideas are stale? What's the actual priority?</td>
+        </tr>
+        <tr>
+          <td class="ooda-cell" style="color: var(--accent-violet);">Decide</td>
+          <td class="label-cell">Idea, Project, Plan</td>
+          <td>Promote ideas to projects. Write and approve plans. Create new plays or tasks. This is the human gate.</td>
+        </tr>
+        <tr>
+          <td class="ooda-cell" style="color: var(--accent-rose);">Act</td>
+          <td class="label-cell">Play, Task, Project Builder</td>
+          <td>Scheduled plays fire. One-off tasks execute. The project builder walks through plans with agents.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pull-quote reveal">
+    The faster you cycle, the faster you learn. The faster you learn, the better your decisions.
+    The better your decisions, the more aligned your output.
+    Tempo is the competitive advantage.
+    <cite>&mdash; John Boyd's insight, applied to AI-augmented development</cite>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 05 · FULL SYSTEM VIEW ═══════════════════════════════════ -->
+<section class="section" style="max-width: 1400px;">
+  <div class="section-header reveal">
+    <div class="section-num" style="color: var(--accent-lime-dim);">05 &mdash; Full System View</div>
+    <h2 class="section-title">Everything Connected</h2>
+    <p class="section-desc">
+      The pipeline flows down. The feedback loop flows back up. Contentbase is the shared state.
+      Luca is the runtime. Agents are the workforce.
+    </p>
+  </div>
+
+  <div class="system-diagram reveal">
+    <div class="diagram-bg"></div>
+    <div class="diagram-content">
+
+      <!-- Vision -->
+      <div class="diagram-row">
+        <div class="d-label">Vision &mdash; North Star</div>
+      </div>
+      <div class="diagram-row">
+        <div class="d-node amber big">Vision</div>
+      </div>
+
+      <div class="d-arrows"><span>&darr;</span></div>
+
+      <!-- Goals -->
+      <div class="diagram-row">
+        <div class="d-label">Goals &mdash; Measurable Targets</div>
+      </div>
+      <div class="diagram-row">
+        <div class="d-node lime">Goal: Ship Product</div>
+        <div class="d-node lime">Goal: Open Source</div>
+        <div class="d-node lime">Goal: Revenue</div>
+      </div>
+
+      <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+      <!-- Ideas -->
+      <div class="diagram-row">
+        <div class="d-label">Ideas &mdash; Exploration Space</div>
+      </div>
+      <div class="diagram-row">
+        <div class="d-node cyan">Voice Interchange</div>
+        <div class="d-node cyan">Twitter Bot</div>
+        <div class="d-node cyan">Docker Analogy</div>
+        <div class="d-node cyan" style="opacity:0.5">+ 7 more sparks</div>
+      </div>
+
+      <div class="d-arrows"><span>&darr;</span><span>promoted</span><span>&darr;</span></div>
+
+      <!-- Projects + Plans -->
+      <div class="diagram-row">
+        <div class="d-label">Projects &amp; Plans &mdash; Executable Work</div>
+      </div>
+      <div class="diagram-row">
+        <div class="d-node violet big">Project</div>
+        <div class="d-node rose">Plan 1 &#10003;</div>
+        <div class="d-node rose">Plan 2</div>
+        <div class="d-node rose" style="opacity: 0.4;">Plan 3</div>
+      </div>
+
+      <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+      <!-- Executors -->
+      <div class="diagram-row">
+        <div class="d-label">Executors &mdash; Plays &amp; Tasks</div>
+      </div>
+      <div class="diagram-row">
+        <div class="d-node rose big">Plays</div>
+        <div class="d-node violet big">Tasks</div>
+        <div class="d-node amber big">Project Builder</div>
+      </div>
+
+      <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+      <!-- Agents -->
+      <div class="diagram-row">
+        <div class="d-label">Agents &mdash; AI Execution</div>
+      </div>
+      <div class="diagram-row">
+        <div class="d-node blue">Claude Code</div>
+        <div class="d-node blue">OpenAI Codex</div>
+        <div class="d-node blue">Luca Assistant</div>
+      </div>
+
+      <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+      <!-- Outputs -->
+      <div class="diagram-row">
+        <div class="d-label">Outputs &mdash; Feedback</div>
+      </div>
+      <div class="diagram-row">
+        <div class="d-node cyan big">Reports</div>
+        <div class="d-node cyan">Commits</div>
+        <div class="d-node cyan">Deployments</div>
+        <div class="d-node cyan">Plan Metrics</div>
+      </div>
+
+      <div class="d-arrows" style="opacity: 0.6;">
+        <span style="font-size: 1.2rem; color: var(--accent-amber);">&uarr;</span>
+        <span style="font-size: 0.6rem; font-family: 'JetBrains Mono', monospace; color: var(--accent-amber);">feeds back into goals &amp; ideas</span>
+        <span style="font-size: 1.2rem; color: var(--accent-amber);">&uarr;</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 06 · THE TEMPO ══════════════════════════════════════════ -->
+<section class="section" style="padding-bottom: 2rem;">
+  <div class="section-header reveal">
+    <div class="section-num" style="color: var(--accent-amber-dim);">06 &mdash; The Tempo</div>
+    <h2 class="section-title">Speed of the Loop</h2>
+    <p class="section-desc">
+      Boyd's key insight: the side that cycles faster wins. Not faster code &mdash; faster
+      learning. The agentic loop compresses the time between observation and action.
+    </p>
+  </div>
+
+  <div class="pipeline-cards reveal">
+    <div class="p-card">
+      <div class="p-card-icon" style="background: rgba(240,168,48,0.12); color: var(--accent-amber);">V</div>
+      <h3>Vision</h3>
+      <p>Written once. Referenced always. The constant against which everything is measured.</p>
+      <span class="p-arrow">&rarr;</span>
+    </div>
+    <div class="p-card">
+      <div class="p-card-icon" style="background: rgba(128,208,64,0.12); color: var(--accent-lime);">G</div>
+      <h3>Goals</h3>
+      <p>Updated weekly. Success criteria get checked by end-of-day plays and reports.</p>
+      <span class="p-arrow">&rarr;</span>
+    </div>
+    <div class="p-card">
+      <div class="p-card-icon" style="background: rgba(64,200,224,0.12); color: var(--accent-cyan);">I</div>
+      <h3>Ideas</h3>
+      <p>Explored daily. Beginning-of-day plays evolve sparks. You promote the winners.</p>
+      <span class="p-arrow">&rarr;</span>
+    </div>
+    <div class="p-card">
+      <div class="p-card-icon" style="background: rgba(160,96,240,0.12); color: var(--accent-violet);">Pj</div>
+      <h3>Projects</h3>
+      <p>Approved and queued. The project builder picks them up every 30 minutes.</p>
+      <span class="p-arrow">&rarr;</span>
+    </div>
+    <div class="p-card">
+      <div class="p-card-icon" style="background: rgba(224,64,112,0.12); color: var(--accent-rose);">Pl</div>
+      <h3>Plans</h3>
+      <p>Executed in minutes. Cost and metrics recorded. Results feed the next Observe.</p>
+    </div>
+  </div>
+
+  <div class="pull-quote reveal">
+    Write a goal on Monday. An idea gets explored Tuesday morning.
+    It's promoted to a project by lunch. Plans are approved by evening.
+    By Wednesday, running software. By Thursday, a report tells you what to do next.
+    <cite>&mdash; The tempo of the agentic loop</cite>
+  </div>
+
+  <div class="code-block reveal">
+    <pre><span class="cmt">// The complete lifecycle, measured in cycle time</span>
+
+<span class="type">Vision</span>          <span class="cmt">// permanent   &mdash; the constant</span>
+  <span class="kw">&rarr;</span> <span class="type">Goal</span>        <span class="cmt">// weeks       &mdash; the target</span>
+    <span class="kw">&rarr;</span> <span class="type">Idea</span>      <span class="cmt">// days        &mdash; the spark</span>
+      <span class="kw">&rarr;</span> <span class="type">Project</span>  <span class="cmt">// days        &mdash; the container</span>
+        <span class="kw">&rarr;</span> <span class="type">Plan</span>   <span class="cmt">// minutes     &mdash; the execution</span>
+
+<span class="cmt">// The feedback instruments</span>
+<span class="type">Play</span>            <span class="cmt">// recurring   &mdash; the habit (explores, builds, monitors)</span>
+<span class="type">Task</span>            <span class="cmt">// once         &mdash; the errand (fixes, reports, migrations)</span>
+<span class="type">Report</span>          <span class="cmt">// on-demand   &mdash; the intelligence (feeds the next Observe)</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ FOOTER ═════════════════════════════════════════════ -->
+<div class="footer">
+  <p>soederpop &middot; the agentic loop v2 &middot; vision &rarr; goals &rarr; ideas &rarr; projects &rarr; plans &middot; plays + tasks + reports close the loop</p>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOEDERPOP — AI Use Cases</title>
+<meta name="description" content="Real AI automation for real businesses. See how one appliance replaces your entire SaaS stack.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js" defer></script>
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root {
+    --bg: #0b0b0b;
+    --bg-card: #101010;
+    --bg-card-hover: #161616;
+    --gold: #d4a843;
+    --gold-dim: #8a7a5a;
+    --gold-bright: #f0d680;
+    --gold-glow: rgba(212, 168, 67, 0.08);
+    --text: #e8e0d4;
+    --text-dim: #7a7268;
+    --text-ghost: #3a3530;
+    --border: rgba(212, 168, 67, 0.08);
+    --border-hover: rgba(212, 168, 67, 0.25);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold-dim) var(--bg);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    cursor: crosshair;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0.02;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      var(--gold) 10px,
+      var(--gold) 10.5px
+    );
+  }
+
+  .stripes {
+    position: fixed;
+    right: 2.5rem;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    gap: 5px;
+    z-index: 100;
+    pointer-events: none;
+    align-items: stretch;
+  }
+
+  .stripe {
+    width: 2px;
+    background: var(--gold);
+    opacity: 0;
+    transform-origin: top;
+    transform: scaleY(0);
+  }
+
+  .nebula {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .nebula::before {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    top: 30%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    filter: blur(160px);
+    background: radial-gradient(circle, rgba(212, 168, 67, 0.05) 0%, transparent 70%);
+    animation: pulse 18s ease-in-out infinite alternate;
+  }
+
+  .nebula::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    bottom: 10%;
+    right: 20%;
+    transform: translate(50%, 50%);
+    border-radius: 50%;
+    filter: blur(140px);
+    background: radial-gradient(circle, rgba(212, 168, 67, 0.03) 0%, transparent 70%);
+    animation: pulse 22s ease-in-out infinite alternate-reverse;
+  }
+
+  @keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-48%, -52%) scale(1.2); }
+  }
+
+  .glow {
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(circle, rgba(212, 168, 67, 0.025) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    filter: blur(60px);
+    transition: opacity 0.3s;
+  }
+
+  body:hover .glow { opacity: 1; }
+
+  .page {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ---- HERO ---- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .hero-mark {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(3rem, 10vw, 8rem);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    user-select: none;
+    text-decoration: none;
+    display: block;
+    background: linear-gradient(
+      90deg,
+      var(--gold) 0%,
+      var(--gold) 40%,
+      var(--gold-bright) 50%,
+      var(--gold) 60%,
+      var(--gold) 100%
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+  }
+
+  .hero-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-top: 1rem;
+    opacity: 0;
+  }
+
+  .hero-line {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, var(--gold-dim), transparent);
+    margin-top: 3rem;
+    opacity: 0;
+    transform-origin: top;
+    transform: scaleY(0);
+  }
+
+  /* ---- SECTION SHARED ---- */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--gold-dim);
+  }
+
+  /* ---- MANIFESTO SECTION ---- */
+  .manifesto {
+    padding: 0 clamp(2rem, 6vw, 8rem);
+    padding-bottom: 6rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .manifesto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(3rem, 6vw, 6rem);
+    align-items: start;
+  }
+
+  .manifesto-text {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  .manifesto-text p {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(0.92rem, 1.6vw, 1.15rem);
+    line-height: 2;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  .manifesto-text .highlight {
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .manifesto-text .done {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin: 1.2rem 0;
+  }
+
+  .manifesto-text code {
+    font-family: 'Space Mono', monospace;
+    color: var(--gold-bright);
+    background: rgba(212, 168, 67, 0.06);
+    padding: 0.15em 0.4em;
+    border: 1px solid rgba(212, 168, 67, 0.12);
+    font-size: 0.9em;
+  }
+
+  /* ---- USE CASES GALLERY ---- */
+  .gallery {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .case-card {
+    background: var(--bg);
+    padding: clamp(1.5rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    transition: background 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .case-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--gold);
+    transition: width 0.5s ease;
+  }
+
+  .case-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .case-card:hover::after {
+    width: 100%;
+  }
+
+  .case-card:hover .case-arrow {
+    transform: translateX(4px);
+    color: var(--gold);
+  }
+
+  .case-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .case-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    opacity: 0.6;
+    filter: grayscale(0.3);
+  }
+
+  .case-vertical {
+    font-size: 0.55rem;
+    color: var(--text-ghost);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .case-name {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+    text-transform: uppercase;
+    color: var(--text);
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .case-tagline {
+    font-size: 0.72rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .case-desc {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .case-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .case-arrow {
+    font-size: 0.7rem;
+    color: var(--gold-dim);
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .case-arrow svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .case-tags {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .case-tag {
+    font-size: 0.5rem;
+    color: var(--text-ghost);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid rgba(212, 168, 67, 0.06);
+    padding: 0.2em 0.5em;
+  }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem clamp(2rem, 6vw, 8rem);
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+  }
+
+  .footer-links a:hover { color: var(--gold); }
+
+  .footer-links .dot {
+    color: var(--gold-dim);
+    font-size: 0.4rem;
+    user-select: none;
+  }
+
+  .footer-socials {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .footer-socials a {
+    color: var(--text-dim);
+    transition: color 0.3s ease;
+    display: flex;
+  }
+
+  .footer-socials a:hover { color: var(--gold); }
+  .footer-socials svg { width: 15px; height: 15px; }
+
+  .footer-stamp {
+    width: 100%;
+    text-align: center;
+    font-size: 0.55rem;
+    color: var(--text-ghost);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 900px) {
+    .manifesto-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .stripes { right: 1rem; gap: 4px; }
+    .stripe { width: 2px; }
+    .hero { min-height: 80vh; }
+    .footer { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stripes">
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+</div>
+
+<div class="nebula"></div>
+<div class="glow" id="glow"></div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <header class="hero">
+    <a href="https://soederpop.com" class="hero-mark">SOEDERPOP</a>
+    <div class="hero-sub">AI Use Cases</div>
+    <div class="hero-line"></div>
+  </header>
+
+  <!-- MANIFESTO + GALLERY -->
+  <section class="manifesto">
+    <div class="section-label">The Pitch</div>
+
+    <div class="manifesto-grid">
+
+      <div class="manifesto-text">
+        <p>
+          I've spent my career building technology that makes it
+          easier for companies and people to turn ideas into software.
+        </p>
+        <p>
+          A lot of good ideas never see the light of day because
+          there wasn't enough time or labor to make them happen.
+        </p>
+        <p>
+          Those days are
+          <span class="done">motherfucking done.</span>
+        </p>
+        <p>
+          With my <code>luca</code> AI assistant you can turn a single
+          idea in the shower into a full blown automated business process.
+        </p>
+        <p>
+          One appliance. No subscriptions. No vendor lock-in.
+          Your data stays in your building.
+          <span class="highlight">You just talk to it.</span>
+        </p>
+      </div>
+
+      <div class="gallery">
+        <div class="gallery-grid">
+
+          <a href="/assets/steady-compass/" class="case-card">
+            <div class="case-top">
+              <span class="case-icon">&#x1F3E5;</span>
+              <span class="case-vertical">Home Health Care</span>
+            </div>
+            <h3 class="case-name">Steady Compass</h3>
+            <div class="case-tagline">Your Agency, One System</div>
+            <p class="case-desc">Caregivers, schedules, compliance, and billing &mdash; handled by one coordinator that never calls out sick.</p>
+            <div class="case-bottom">
+              <span class="case-arrow">
+                View
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </span>
+              <div class="case-tags">
+                <span class="case-tag">scheduling</span>
+                <span class="case-tag">compliance</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="/ai-usecases/iron-case/" class="case-card">
+            <div class="case-top">
+              <span class="case-icon">&#x2696;</span>
+              <span class="case-vertical">Personal Injury Law</span>
+            </div>
+            <h3 class="case-name">Iron Case</h3>
+            <div class="case-tagline">Your Firm, One System</div>
+            <p class="case-desc">Case files, medical records, demand packages, and deadlines &mdash; no statute ever slips through the cracks again.</p>
+            <div class="case-bottom">
+              <span class="case-arrow">
+                View
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </span>
+              <div class="case-tags">
+                <span class="case-tag">case mgmt</span>
+                <span class="case-tag">deadlines</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="/ai-usecases/content-machine/" class="case-card">
+            <div class="case-top">
+              <span class="case-icon">&#x1F3AC;</span>
+              <span class="case-vertical">Content Creator</span>
+            </div>
+            <h3 class="case-name">Content Machine</h3>
+            <div class="case-tagline">Your Brand, One System</div>
+            <p class="case-desc">One video becomes five platform posts. Ideas captured at 3am are scripts by morning. Your content never stops working.</p>
+            <div class="case-bottom">
+              <span class="case-arrow">
+                View
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </span>
+              <div class="case-tags">
+                <span class="case-tag">multi-platform</span>
+                <span class="case-tag">scheduling</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="/ai-usecases/kitchen-pilot/" class="case-card">
+            <div class="case-top">
+              <span class="case-icon">&#x1F525;</span>
+              <span class="case-vertical">Restaurant</span>
+            </div>
+            <h3 class="case-name">Kitchen Pilot</h3>
+            <div class="case-tagline">Your Restaurant, One System</div>
+            <p class="case-desc">Inventory, vendors, staff scheduling, and health prep &mdash; handled so you can stay on the floor where you belong.</p>
+            <div class="case-bottom">
+              <span class="case-arrow">
+                View
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </span>
+              <div class="case-tags">
+                <span class="case-tag">inventory</span>
+                <span class="case-tag">food cost</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="/ai-usecases/closing-machine/" class="case-card">
+            <div class="case-top">
+              <span class="case-icon">&#x1F3E0;</span>
+              <span class="case-vertical">Real Estate</span>
+            </div>
+            <h3 class="case-name">Closing Machine</h3>
+            <div class="case-tagline">Your Business, One System</div>
+            <p class="case-desc">Leads, showings, transactions, and follow-ups &mdash; no deal falls through the cracks, no lead goes cold.</p>
+            <div class="case-bottom">
+              <span class="case-arrow">
+                View
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </span>
+              <div class="case-tags">
+                <span class="case-tag">crm</span>
+                <span class="case-tag">transactions</span>
+              </div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <nav class="footer-links">
+      <a href="https://soederpop.com">home</a>
+      <span class="dot">&middot;</span>
+      <a href="https://portfolio.soederpop.com">portfolio</a>
+      <span class="dot">&middot;</span>
+      <a href="https://ai.soederpop.com">ai consulting</a>
+      <span class="dot">&middot;</span>
+      <a href="https://luca-js.soederpop.com">luca</a>
+      <span class="dot">&middot;</span>
+      <a href="https://contentbase.soederpop.com">contentbase</a>
+    </nav>
+    <div class="footer-socials">
+      <a href="https://github.com/soederpop" aria-label="GitHub" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      </a>
+      <a href="https://x.com/soederpop" aria-label="X" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+    </div>
+    <div class="footer-stamp">est. mmxxv</div>
+  </footer>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+    tl
+      .to('.stripe', {
+        scaleY: 1,
+        opacity: 0.12,
+        duration: 1.2,
+        stagger: 0.08,
+        ease: 'power2.inOut'
+      }, 0)
+
+      .to('.nebula', { opacity: 1, duration: 2, ease: 'power2.out' }, 0)
+
+      .to('.hero-mark', { opacity: 1, duration: 0 }, 0.3)
+      .fromTo('.hero-mark', {
+        y: 60,
+        opacity: 0
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.9,
+        ease: 'back.out(1.3)'
+      }, 0.3)
+
+      .to('.hero-mark', {
+        backgroundPosition: '-100% 0',
+        duration: 1.4,
+        ease: 'power2.inOut'
+      }, 1.0)
+
+      .fromTo('.hero-sub', {
+        y: 10,
+        opacity: 0
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.7
+      }, 1.2)
+
+      .to('.hero-line', {
+        opacity: 0.4,
+        scaleY: 1,
+        duration: 0.8,
+        ease: 'power3.inOut'
+      }, 1.5);
+
+    // section label
+    gsap.utils.toArray('.section-label').forEach(el => {
+      gsap.fromTo(el, {
+        x: -20,
+        opacity: 0
+      }, {
+        x: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: el,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        }
+      });
+    });
+
+    // manifesto text
+    gsap.to('.manifesto-text', {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.manifesto-text',
+        start: 'top 82%',
+        toggleActions: 'play none none none'
+      }
+    });
+
+    // gallery
+    gsap.to('.gallery', {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      delay: 0.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.gallery',
+        start: 'top 82%',
+        toggleActions: 'play none none none'
+      }
+    });
+
+    // individual cards
+    gsap.utils.toArray('.case-card').forEach((el, i) => {
+      gsap.fromTo(el, {
+        opacity: 0,
+        y: 15
+      }, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        delay: i * 0.08,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.gallery-grid',
+          start: 'top 82%',
+          toggleActions: 'play none none none'
+        }
+      });
+    });
+
+    // footer
+    gsap.fromTo('.footer', {
+      opacity: 0,
+      y: 20
+    }, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: '.footer',
+        start: 'top 92%',
+        toggleActions: 'play none none none'
+      }
+    });
+
+    // mouse glow
+    const glowEl = document.getElementById('glow');
+    const gX = gsap.quickTo(glowEl, 'left', { duration: 0.5, ease: 'power2.out' });
+    const gY = gsap.quickTo(glowEl, 'top', { duration: 0.5, ease: 'power2.out' });
+
+    document.addEventListener('mousemove', (e) => {
+      gX(e.clientX);
+      gY(e.clientY);
+    });
+  });
+</script>
+
+</body>
+</html>

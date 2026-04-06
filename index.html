@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOEDERPOP</title>
+<meta name="description" content="soederpop">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js" defer></script>
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  :root {
+    --bg: #0b0b0b;
+    --gold: #d4a843;
+    --gold-dim: #8a7a5a;
+    --gold-bright: #f0d680;
+    --text: #e8e0d4;
+    --text-dim: #7a7268;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    cursor: crosshair;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* subtle diagonal hash pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.02;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      var(--gold) 10px,
+      var(--gold) 10.5px
+    );
+  }
+
+  /* three stripes — track suit energy */
+  .stripes {
+    position: fixed;
+    right: 2.5rem;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    gap: 5px;
+    z-index: 2;
+    pointer-events: none;
+    align-items: stretch;
+  }
+
+  .stripe {
+    width: 2px;
+    background: var(--gold);
+    opacity: 0;
+    transform-origin: top;
+    transform: scaleY(0);
+  }
+
+  /* warm ambient glow */
+  .nebula {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .nebula::before {
+    content: '';
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    top: 40%;
+    left: 45%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    filter: blur(140px);
+    background: radial-gradient(circle, rgba(212, 168, 67, 0.06) 0%, transparent 70%);
+    animation: pulse 15s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    100% { transform: translate(-48%, -52%) scale(1.15); }
+  }
+
+  /* layout */
+  .scene {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem 2rem 5.5rem;
+  }
+
+  /* the mark — BIG AND BOLD */
+  .mark {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(5rem, 16vw, 12rem);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    user-select: none;
+    opacity: 0;
+    /* gold shimmer gradient */
+    background: linear-gradient(
+      90deg,
+      var(--gold) 0%,
+      var(--gold) 40%,
+      var(--gold-bright) 50%,
+      var(--gold) 60%,
+      var(--gold) 100%
+    );
+    background-size: 200% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* bottle */
+  .bottle-wrap {
+    margin-bottom: 0.5rem;
+    opacity: 0;
+  }
+
+  .bottle-wrap svg {
+    overflow: visible;
+    display: block;
+    width: clamp(60px, 14vw, 85px);
+    height: auto;
+  }
+
+  .bottle-glass {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    opacity: 0.6;
+  }
+
+  .bottle-liquid {
+    fill: var(--gold);
+    opacity: 0;
+  }
+
+  .cap-ridge {
+    stroke: var(--gold);
+    stroke-width: 0.7;
+    opacity: 0;
+  }
+
+  .chain-path {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
+    opacity: 0;
+  }
+
+  .pendant-ring {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1.2;
+    opacity: 0;
+  }
+
+  .pendant-sign {
+    fill: var(--gold);
+    opacity: 0;
+    font-family: 'Anton', sans-serif;
+  }
+
+  /* rising bubbles */
+  .bubble {
+    fill: var(--gold);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: rise var(--dur) ease-in var(--delay) infinite;
+    animation-play-state: paused;
+  }
+
+  @keyframes rise {
+    0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+    8%   { opacity: 0.5; }
+    25%  { transform: translate(2px, calc(var(--travel) * 0.25)) scale(0.9); }
+    50%  { transform: translate(-1.5px, calc(var(--travel) * 0.5)) scale(0.7); }
+    75%  { transform: translate(1px, calc(var(--travel) * 0.75)) scale(0.45); }
+    92%  { opacity: 0.08; }
+    100% { transform: translate(0, var(--travel)) scale(0.15); opacity: 0; }
+  }
+
+  /* fizz */
+  .fizz-dot {
+    fill: var(--gold);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: fizz-escape var(--dur) ease-out var(--delay) infinite;
+    animation-play-state: paused;
+  }
+
+  @keyframes fizz-escape {
+    0%   { transform: translate(0, 0) scale(1); opacity: 0; }
+    12%  { opacity: 0.4; }
+    100% { transform: translate(var(--fx), var(--fy)) scale(0); opacity: 0; }
+  }
+
+  /* separator */
+  .sep {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 1.5rem 0;
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  /* contact */
+  .contact {
+    font-size: clamp(0.8rem, 1.6vw, 0.9rem);
+    color: var(--text-dim);
+    text-align: center;
+    line-height: 1.9;
+    max-width: 42ch;
+    opacity: 0;
+  }
+
+  .contact a {
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease, color 0.3s ease;
+  }
+
+  .contact a:hover {
+    border-bottom-color: var(--gold);
+    color: var(--gold-bright);
+  }
+
+  /* mouse glow */
+  .glow {
+    position: fixed;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(circle, rgba(212, 168, 67, 0.03) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    filter: blur(50px);
+    transition: opacity 0.3s;
+  }
+
+  body:hover .glow { opacity: 1; }
+
+  /* footer */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 1rem 2rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  .projects {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .projects a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    pointer-events: auto;
+    opacity: 0;
+  }
+
+  .projects a:hover {
+    color: var(--gold);
+  }
+
+  .projects .dot {
+    color: var(--gold-dim);
+    opacity: 0;
+    font-size: 0.5rem;
+    user-select: none;
+  }
+
+  .socials {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .socials a {
+    color: var(--text-dim);
+    transition: color 0.3s ease;
+    display: flex;
+    pointer-events: auto;
+    opacity: 0;
+  }
+
+  .socials a:hover { color: var(--gold); }
+  .socials svg { width: 16px; height: 16px; }
+
+  /* corner */
+  .corner {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 2.5rem;
+    z-index: 2;
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    opacity: 0;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 600px) {
+    .stripes { right: 1rem; gap: 4px; }
+    .stripe { width: 2px; }
+    .bottle-wrap svg { width: 70px; }
+    .mark { letter-spacing: 0.02em; }
+    .sep { width: 45px; margin: 1.2rem 0; }
+    .contact { font-size: 0.8rem; line-height: 2; max-width: 90vw; }
+    .corner { left: 1rem; bottom: 0.8rem; font-size: 0.6rem; }
+    .footer { padding: 0.8rem 1rem 1.2rem; gap: 0.6rem; }
+    .projects { gap: 0.8rem; }
+    .projects a { font-size: 0.72rem; letter-spacing: 0.08em; }
+    .socials { gap: 1.2rem; }
+    .socials svg { width: 18px; height: 18px; }
+    .scene { padding: 1.5rem 1.5rem 5.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stripes">
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+</div>
+
+<div class="nebula"></div>
+<div class="glow" id="glow"></div>
+
+<div class="scene" id="scene">
+  <div class="bottle-wrap">
+    <svg viewBox="0 0 120 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="bottle-clip">
+          <path d="M49 6 Q49 2 60 2 Q71 2 71 6 L71 20 L73 22 L73 26 L68 28 L66 90 Q66 106 88 118 L88 250 Q88 268 78 274 L42 274 Q32 268 32 250 L32 118 Q54 106 54 90 L52 28 L47 26 L47 22 L49 20 Z"/>
+        </clipPath>
+      </defs>
+
+      <!-- bottle outline -->
+      <path class="bottle-glass" d="M49 6 Q49 2 60 2 Q71 2 71 6 L71 20 L73 22 L73 26 L68 28 L66 90 Q66 106 88 118 L88 250 Q88 268 78 274 L42 274 Q32 268 32 250 L32 118 Q54 106 54 90 L52 28 L47 26 L47 22 L49 20 Z"/>
+
+      <!-- liquid -->
+      <path class="bottle-liquid" d="M34 135 Q60 128 86 135 L88 250 Q88 268 78 274 L42 274 Q32 268 32 250 Z"/>
+
+      <!-- cap ridges -->
+      <line class="cap-ridge" x1="51" y1="9" x2="69" y2="9"/>
+      <line class="cap-ridge" x1="51" y1="13" x2="69" y2="13"/>
+      <line class="cap-ridge" x1="51" y1="17" x2="69" y2="17"/>
+
+      <!-- gold chain draped from neck -->
+      <path class="chain-path" d="M46 38 C36 55, 32 78, 44 95 Q52 108, 60 108 Q68 108, 76 95 C88 78, 84 55, 74 38"/>
+
+      <!-- pendant -->
+      <circle class="pendant-ring" cx="60" cy="112" r="9"/>
+      <text class="pendant-sign" x="60" y="117" text-anchor="middle" font-size="13">$</text>
+
+      <!-- bubbles -->
+      <g clip-path="url(#bottle-clip)">
+        <circle class="bubble" cx="45" cy="250" r="2.5" style="--dur:3.5s;--delay:0s;--travel:-120px"/>
+        <circle class="bubble" cx="68" cy="258" r="1.8" style="--dur:4.2s;--delay:0.8s;--travel:-130px"/>
+        <circle class="bubble" cx="56" cy="245" r="3.0" style="--dur:3.0s;--delay:1.5s;--travel:-115px"/>
+        <circle class="bubble" cx="78" cy="252" r="1.5" style="--dur:4.8s;--delay:0.3s;--travel:-140px"/>
+        <circle class="bubble" cx="40" cy="262" r="2.0" style="--dur:3.8s;--delay:2.0s;--travel:-135px"/>
+        <circle class="bubble" cx="72" cy="240" r="2.8" style="--dur:3.2s;--delay:1.0s;--travel:-110px"/>
+        <circle class="bubble" cx="52" cy="265" r="1.2" style="--dur:5.0s;--delay:0.5s;--travel:-145px"/>
+        <circle class="bubble" cx="82" cy="248" r="2.2" style="--dur:3.6s;--delay:1.8s;--travel:-125px"/>
+        <circle class="bubble" cx="60" cy="255" r="1.6" style="--dur:4.5s;--delay:2.5s;--travel:-138px"/>
+        <circle class="bubble" cx="38" cy="242" r="3.2" style="--dur:3.4s;--delay:0.7s;--travel:-118px"/>
+        <circle class="bubble" cx="63" cy="260" r="1.0" style="--dur:5.2s;--delay:3.0s;--travel:-148px"/>
+        <circle class="bubble" cx="75" cy="256" r="2.0" style="--dur:3.9s;--delay:1.3s;--travel:-128px"/>
+      </g>
+
+      <!-- fizz -->
+      <circle class="fizz-dot" cx="58" cy="4" r="1.2" style="--fx:-10px;--fy:-30px;--dur:2.0s;--delay:0.5s"/>
+      <circle class="fizz-dot" cx="63" cy="3" r="1.0" style="--fx:14px;--fy:-35px;--dur:2.5s;--delay:1.2s"/>
+      <circle class="fizz-dot" cx="55" cy="6" r="0.8" style="--fx:-18px;--fy:-22px;--dur:1.8s;--delay:0.1s"/>
+      <circle class="fizz-dot" cx="60" cy="2" r="1.4" style="--fx:2px;--fy:-42px;--dur:2.2s;--delay:1.8s"/>
+      <circle class="fizz-dot" cx="57" cy="5" r="0.7" style="--fx:20px;--fy:-26px;--dur:2.8s;--delay:0.8s"/>
+      <circle class="fizz-dot" cx="64" cy="4" r="1.1" style="--fx:-6px;--fy:-45px;--dur:2.4s;--delay:2.2s"/>
+      <circle class="fizz-dot" cx="53" cy="7" r="0.9" style="--fx:-22px;--fy:-18px;--dur:1.6s;--delay:1.5s"/>
+      <circle class="fizz-dot" cx="66" cy="5" r="1.3" style="--fx:10px;--fy:-32px;--dur:2.1s;--delay:0.3s"/>
+    </svg>
+  </div>
+  <div class="mark">SOEDERPOP</div>
+  <div class="sep"></div>
+  <div class="contact">
+    if your vibe code is broke but you aint<br>
+    <a href="mailto:lets.get.this.money@soederpop.com">lets.get.this.money@soederpop.com</a>
+  </div>
+</div>
+
+<footer class="footer">
+  <nav class="projects">
+    <a href="https://contentbase.soederpop.com">contentbase</a>
+    <span class="dot">&middot;</span>
+    <a href="https://luca-js.soederpop.com" title="Lightweight Universal Conversational Architecture">luca</a>
+    <span class="dot">&middot;</span>
+    <a href="https://portfolio.soederpop.com">portfolio</a>
+    <span class="dot">&middot;</span>
+    <a href="https://ai.soederpop.com">ai consulting</a>
+    <span class="dot">&middot;</span>
+    <a href="https://poker.soederpop.com">poker</a>
+  </nav>
+  <div class="socials">
+    <a href="https://github.com/soederpop" aria-label="GitHub" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+    </a>
+    <a href="https://x.com/soederpop" aria-label="X" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+  </div>
+</footer>
+
+<div class="corner">est. mmxxv</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // bottle path draw setup
+    const glass = document.querySelector('.bottle-glass');
+    const pathLen = glass.getTotalLength();
+    const chain = document.querySelector('.chain-path');
+    const chainLen = chain.getTotalLength();
+
+    gsap.set(glass, { strokeDasharray: pathLen, strokeDashoffset: pathLen });
+    gsap.set(chain, { strokeDasharray: chainLen, strokeDashoffset: chainLen });
+    gsap.set('.bottle-wrap', { opacity: 1 });
+    gsap.set('.mark', { opacity: 1 });
+
+    // master timeline — snappy, confident
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+
+    tl
+      // three stripes drop in
+      .to('.stripe', {
+        scaleY: 1,
+        opacity: 0.12,
+        duration: 1.2,
+        stagger: 0.08,
+        ease: 'power2.inOut'
+      }, 0)
+
+      // warm glow
+      .to('.nebula', { opacity: 1, duration: 2, ease: 'power2.out' }, 0)
+
+      // bottle draws in
+      .to(glass, { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 0.2)
+
+      // cap ridges
+      .to('.cap-ridge', { opacity: 0.35, duration: 0.3, stagger: 0.1 }, 0.8)
+
+      // liquid fills
+      .to('.bottle-liquid', { opacity: 0.05, duration: 1, ease: 'power1.inOut' }, 1.0)
+
+      // chain draws in
+      .to(chain, {
+        strokeDashoffset: 0,
+        opacity: 0.5,
+        duration: 1,
+        ease: 'power2.inOut'
+      }, 1.2)
+
+      // pendant drops in
+      .to('.pendant-ring', { opacity: 0.5, duration: 0.4, ease: 'back.out(2)' }, 1.8)
+      .to('.pendant-sign', { opacity: 0.5, duration: 0.3 }, 1.9)
+
+      // fizz starts
+      .call(() => {
+        document.querySelectorAll('.bubble, .fizz-dot').forEach(el => {
+          el.style.animationPlayState = 'running';
+        });
+      }, null, 1.6)
+
+      // SOEDERPOP slams in
+      .fromTo('.mark', {
+        y: 50,
+        opacity: 0
+      }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'back.out(1.4)'
+      }, 1.4)
+
+      // gold shimmer sweep across text
+      .to('.mark', {
+        backgroundPosition: '-100% 0',
+        duration: 1.2,
+        ease: 'power2.inOut'
+      }, 2.0)
+
+      // separator
+      .to('.sep', { opacity: 0.6, scaleX: 1, duration: 0.6, ease: 'power3.inOut' }, 2.4)
+
+      // contact
+      .fromTo('.contact', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8 }, 2.7)
+
+      // footer
+      .to('.projects a', { opacity: 1, duration: 0.4, stagger: 0.06 }, 3.0)
+      .to('.projects .dot', { opacity: 0.3, duration: 0.3, stagger: 0.06 }, 3.1)
+      .to('.socials a', { opacity: 1, duration: 0.4, stagger: 0.1 }, 3.2)
+
+      // corner
+      .to('.corner', { opacity: 1, duration: 0.5 }, 3.3);
+
+    // bottle floats after entrance
+    gsap.to('.bottle-wrap', {
+      y: -5,
+      duration: 3,
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+      delay: 2.5
+    });
+
+    // pendant sways
+    gsap.to('.pendant-ring, .pendant-sign', {
+      x: 2,
+      duration: 2.5,
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+      delay: 3
+    });
+
+    // mouse glow + parallax
+    const glowEl = document.getElementById('glow');
+    const glowX = gsap.quickTo(glowEl, 'left', { duration: 0.5, ease: 'power2.out' });
+    const glowY = gsap.quickTo(glowEl, 'top', { duration: 0.5, ease: 'power2.out' });
+
+    const sceneEl = document.getElementById('scene');
+    const sceneX = gsap.quickTo(sceneEl, 'x', { duration: 0.8, ease: 'power2.out' });
+    const sceneY = gsap.quickTo(sceneEl, 'y', { duration: 0.8, ease: 'power2.out' });
+
+    document.addEventListener('mousemove', (e) => {
+      glowX(e.clientX);
+      glowY(e.clientY);
+      const cx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const cy = (e.clientY / window.innerHeight - 0.5) * 2;
+      sceneX(cx * -4);
+      sceneY(cy * -2.5);
+    });
+  });
+</script>
+
+</body>
+</html>

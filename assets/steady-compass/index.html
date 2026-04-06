@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steady Compass — Your Agency, One System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0c1018;
+    --bg-card: #111822;
+    --bg-card-hover: #161f2c;
+    --border: #1a2435;
+    --border-bright: #243042;
+    --text: #b8c4d4;
+    --text-dim: #5e7088;
+    --text-bright: #dfe8f0;
+    --gold: #d4a24c;
+    --gold-dim: #8a6a30;
+    --gold-glow: rgba(212, 162, 76, 0.12);
+    --teal: #3ca8a0;
+    --teal-dim: #246460;
+    --teal-glow: rgba(60, 168, 160, 0.12);
+    --coral: #d46050;
+    --coral-dim: #7a3830;
+    --coral-glow: rgba(212, 96, 80, 0.12);
+    --slate: #6888a8;
+    --slate-dim: #3a4e62;
+    --slate-glow: rgba(104, 136, 168, 0.1);
+    --sage: #6aaa70;
+    --sage-dim: #3a6640;
+    --sage-glow: rgba(106, 170, 112, 0.1);
+    --plum: #9870b8;
+    --plum-dim: #5a4070;
+    --plum-glow: rgba(152, 112, 184, 0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 120%;
+    height: 140%;
+    background:
+      radial-gradient(ellipse 700px 500px at 30% 40%, var(--gold-glow), transparent),
+      radial-gradient(ellipse 600px 400px at 70% 60%, var(--teal-glow), transparent);
+    opacity: 0.6;
+    animation: heroShift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroShift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(20px, -10px) scale(1.05); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    animation: fadeInUp 1.5s ease 1s both, gentleBob 3s ease-in-out infinite 2.5s;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes gentleBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── Sections ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* ── Document Type Grid ── */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .doc-card {
+    background: var(--bg-card);
+    padding: 1.75rem;
+    transition: background 0.3s ease;
+    cursor: default;
+  }
+
+  .doc-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .doc-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+  }
+
+  .doc-tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Entry Points / Timeline ── */
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 2rem;
+  }
+
+  .timeline-step {
+    display: grid;
+    grid-template-columns: 90px 40px 1fr;
+    align-items: start;
+    gap: 0;
+    min-height: 110px;
+  }
+
+  .t-when {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    text-align: right;
+    padding-top: 0.3rem;
+    padding-right: 1rem;
+  }
+
+  .t-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .t-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-bright);
+  }
+
+  .t-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .t-dot.gold { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+  .t-dot.teal { background: var(--teal); box-shadow: 0 0 12px var(--teal-glow); }
+  .t-dot.coral { background: var(--coral); box-shadow: 0 0 12px var(--coral-glow); }
+  .t-dot.sage { background: var(--sage); box-shadow: 0 0 12px var(--sage-glow); }
+  .t-dot.plum { background: var(--plum); box-shadow: 0 0 12px var(--plum-glow); }
+
+  .t-body {
+    padding: 0 0 2rem 1.25rem;
+  }
+
+  .t-body h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+  }
+
+  .t-body p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── System Diagram ── */
+  .flow-section {
+    padding: 5rem 2rem 4rem;
+  }
+
+  .flow-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .system-diagram {
+    margin-top: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 25% 30%, var(--gold-glow), transparent),
+      radial-gradient(ellipse 500px 300px at 75% 70%, var(--teal-glow), transparent),
+      radial-gradient(ellipse 400px 400px at 50% 50%, var(--plum-glow), transparent);
+    opacity: 0.4;
+  }
+
+  .diagram-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .d-label {
+    width: 100%;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .d-node {
+    padding: 0.65rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    min-width: 105px;
+    transition: all 0.3s;
+  }
+
+  .d-node:hover { transform: scale(1.05); }
+
+  .d-node.gold { border-color: var(--gold-dim); color: var(--gold); background: rgba(212,162,76,0.06); }
+  .d-node.teal { border-color: var(--teal-dim); color: var(--teal); background: rgba(60,168,160,0.06); }
+  .d-node.coral { border-color: var(--coral-dim); color: var(--coral); background: rgba(212,96,80,0.06); }
+  .d-node.slate { border-color: var(--slate-dim); color: var(--slate); background: rgba(104,136,168,0.06); }
+  .d-node.sage { border-color: var(--sage-dim); color: var(--sage); background: rgba(106,170,112,0.06); }
+  .d-node.plum { border-color: var(--plum-dim); color: var(--plum); background: rgba(152,112,184,0.06); }
+
+  .d-node.big {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    min-width: 150px;
+  }
+
+  .d-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0.5rem 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    opacity: 0.4;
+  }
+
+  .d-arrows span {
+    display: inline-block;
+    animation: arrowPulse 2.5s ease-in-out infinite;
+  }
+
+  .d-arrows span:nth-child(2) { animation-delay: 0.2s; }
+  .d-arrows span:nth-child(3) { animation-delay: 0.4s; }
+  .d-arrows span:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ── Scenario Cards ── */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .scenario-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .scenario-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .scenario-card.morning::before { background: linear-gradient(90deg, var(--gold), var(--gold-dim)); }
+  .scenario-card.urgent::before { background: linear-gradient(90deg, var(--coral), var(--coral-dim)); }
+  .scenario-card.auto::before { background: linear-gradient(90deg, var(--teal), var(--teal-dim)); }
+  .scenario-card.weekly::before { background: linear-gradient(90deg, var(--plum), var(--plum-dim)); }
+
+  .scenario-timing {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .scenario-card.morning .scenario-timing { color: var(--gold); }
+  .scenario-card.urgent .scenario-timing { color: var(--coral); }
+  .scenario-card.auto .scenario-timing { color: var(--teal); }
+  .scenario-card.weekly .scenario-timing { color: var(--plum); }
+
+  .scenario-card h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-card p {
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .scenario-who {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 5px;
+  }
+
+  .scenario-who.ai {
+    color: var(--plum);
+    background: rgba(152,112,184,0.08);
+    border: 1px solid var(--plum-dim);
+  }
+
+  .scenario-who.people {
+    color: var(--teal);
+    background: rgba(60,168,160,0.08);
+    border: 1px solid var(--teal-dim);
+  }
+
+  .scenario-who.both {
+    color: var(--gold);
+    background: rgba(212,162,76,0.08);
+    border: 1px solid var(--gold-dim);
+  }
+
+  /* ── Capability Map ── */
+  .cap-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .cap-group {
+    background: var(--bg-card);
+    padding: 1.5rem;
+  }
+
+  .cap-group h4 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+
+  .cap-group.scheduling h4 { color: var(--gold); }
+  .cap-group.comms h4 { color: var(--teal); }
+  .cap-group.docs h4 { color: var(--plum); }
+  .cap-group.oversight h4 { color: var(--coral); }
+  .cap-group.finance h4 { color: var(--sage); }
+  .cap-group.growth h4 { color: var(--slate); }
+
+  .cap-list {
+    list-style: none;
+  }
+
+  .cap-list li {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    transition: color 0.2s;
+    line-height: 1.5;
+  }
+
+  .cap-list li:hover { color: var(--text); }
+
+  .cap-list li::before {
+    content: '—';
+    margin-right: 0.5rem;
+    opacity: 0.3;
+  }
+
+  /* ── Appliance Section ── */
+  .appliance-box {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 2.5rem;
+    position: relative;
+  }
+
+  .appliance-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 500px 350px at 50% 50%, var(--gold-glow), transparent);
+    opacity: 0.5;
+  }
+
+  .appliance-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .appliance-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .appliance-icon {
+    width: 120px;
+    height: 80px;
+    border: 2px solid var(--gold-dim);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212,162,76,0.04);
+    position: relative;
+  }
+
+  .appliance-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20%;
+    right: 20%;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .appliance-icon-inner {
+    font-size: 1.8rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .appliance-pulse {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s infinite;
+  }
+
+  .pulse-dot:nth-child(2) { animation-delay: 0.3s; background: var(--teal); }
+  .pulse-dot:nth-child(3) { animation-delay: 0.6s; background: var(--sage); }
+
+  .pulse-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .appliance-details h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    margin-bottom: 1rem;
+  }
+
+  .appliance-details p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .appliance-specs {
+    list-style: none;
+    margin-top: 1rem;
+  }
+
+  .appliance-specs li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .appliance-specs li span:last-child {
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* ── Sample Document ── */
+  .sample-doc {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+
+  .sample-doc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sample-doc pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  .sample-doc .field { color: var(--teal); }
+  .sample-doc .value { color: var(--gold); }
+  .sample-doc .heading { color: var(--text-bright); font-weight: 500; }
+  .sample-doc .note { color: var(--text-dim); }
+  .sample-doc .divider { color: var(--slate-dim); }
+
+  /* ── Pull Quote ── */
+  .pull-quote {
+    border-left: 2px solid var(--gold-dim);
+    padding: 1.5rem 2rem;
+    margin: 3rem 0;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-style: normal;
+    color: var(--text-dim);
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Comparison ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .compare-col {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .compare-col.before {
+    border-color: var(--coral-dim);
+  }
+
+  .compare-col.after {
+    border-color: var(--gold-dim);
+  }
+
+  .compare-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .compare-col.before .compare-label { color: var(--coral); }
+  .compare-col.after .compare-label { color: var(--gold); }
+
+  .compare-item {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.5;
+  }
+
+  .compare-item:last-child { border-bottom: none; }
+
+  .compare-col.before .compare-item::before {
+    content: '×';
+    color: var(--coral-dim);
+    margin-right: 0.6rem;
+    font-weight: 600;
+  }
+
+  .compare-col.after .compare-item::before {
+    content: '→';
+    color: var(--gold);
+    margin-right: 0.6rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer p {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  /* ── Scroll Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .section { padding: 3.5rem 1.25rem; }
+    .timeline-step { grid-template-columns: 70px 30px 1fr; }
+    .appliance-content { grid-template-columns: 1fr; gap: 2rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .diagram-content { padding: 2rem 1rem; }
+    .d-node { min-width: 85px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-label">Soederpop Systems</div>
+    <h1>Your Agency, <em>One System</em></h1>
+    <p class="hero-sub">
+      You write what you need in plain, organized notes. An intelligent system reads them,
+      coordinates your caregivers, handles the paperwork, and keeps everything running.
+      No switching between five different programs. No things falling through the cracks.
+    </p>
+    <div class="scroll-hint">Scroll to see how it works</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 01 · YOUR DOCUMENTS ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">01 — The Foundation</div>
+    <h2 class="section-title">Your Records Drive Everything</h2>
+    <p class="section-desc">
+      The system understands a handful of document types. Each one has a clear structure —
+      like a well-designed form, but written as natural notes. You fill in the pieces you know,
+      and the system understands what to do with them.
+    </p>
+  </div>
+
+  <div class="doc-grid reveal">
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(212,162,76,0.12); color: var(--gold); font-size: 1.2rem;">&#9825;</div>
+      <h3>Client Profile</h3>
+      <p>Who they are, where they live, what kind of care they need, emergency contacts, physician info, insurance details.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">care level</span>
+        <span class="doc-tag">location</span>
+        <span class="doc-tag">schedule preference</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(60,168,160,0.12); color: var(--teal); font-size: 1.2rem;">&#9734;</div>
+      <h3>Caregiver Profile</h3>
+      <p>Skills, certifications, availability, preferred areas, languages spoken, vehicle access, performance notes.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">certifications</span>
+        <span class="doc-tag">availability</span>
+        <span class="doc-tag">specialties</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(152,112,184,0.12); color: var(--plum); font-size: 1.2rem;">&#9998;</div>
+      <h3>Care Plan</h3>
+      <p>The specific care instructions for a client — daily routines, medications, mobility needs, dietary restrictions, goals.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">linked to client</span>
+        <span class="doc-tag">review date</span>
+        <span class="doc-tag">physician sign-off</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(212,96,80,0.12); color: var(--coral); font-size: 1.2rem;">&#9200;</div>
+      <h3>Schedule</h3>
+      <p>Who is going where, and when. Weekly patterns with override support for holidays, call-outs, and special requests.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">shifts</span>
+        <span class="doc-tag">conflicts</span>
+        <span class="doc-tag">coverage gaps</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(106,170,112,0.12); color: var(--sage); font-size: 1.2rem;">&#9745;</div>
+      <h3>Compliance Record</h3>
+      <p>Visit logs, training completions, incident reports, certification expirations. Everything the state asks for.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">auto-generated</span>
+        <span class="doc-tag">audit-ready</span>
+        <span class="doc-tag">alerts</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(104,136,168,0.12); color: var(--slate); font-size: 1.2rem;">&#9993;</div>
+      <h3>Task Request</h3>
+      <p>Anything you need done — "find a replacement for Tuesday," "send training reminder to Maria," "run the billing report."</p>
+      <div class="doc-meta">
+        <span class="doc-tag">priority</span>
+        <span class="doc-tag">due date</span>
+        <span class="doc-tag">assigned to</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sample-doc reveal" style="margin-top:2rem;">
+    <div class="sample-doc-title">What a task request actually looks like</div>
+    <pre><span class="divider">---</span>
+<span class="field">priority</span>: <span class="value">high</span>
+<span class="field">due</span>: <span class="value">today</span>
+<span class="field">assigned</span>: <span class="value">system</span>
+<span class="divider">---</span>
+
+<span class="heading"># Find Replacement for Tuesday Shift</span>
+
+<span class="note">Rosa called out sick for her Tuesday 8am-4pm shift with Mrs. Patterson.</span>
+<span class="note">Mrs. Patterson needs someone with dementia care experience.</span>
+<span class="note">Check who's available, send them a text, and update the schedule.</span>
+<span class="note">Let me know who confirms.</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 02 · HOW YOU INTERACT ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">02 — Talking to the System</div>
+    <h2 class="section-title">Use It However You Work</h2>
+    <p class="section-desc">
+      You don't have to learn new software. Write a note on your phone at a client's home.
+      Speak a command while driving. Type at your desk. The system picks it up
+      from wherever you are.
+    </p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="timeline-step">
+      <div class="t-when">On the go</div>
+      <div class="t-line"><div class="t-dot gold"></div></div>
+      <div class="t-body">
+        <h4>Your Phone or Tablet</h4>
+        <p>A simple app where you can create task requests, update client notes, or check the schedule.
+        Works offline — it syncs when you're back in range.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">In the car</div>
+      <div class="t-line"><div class="t-dot coral"></div></div>
+      <div class="t-body">
+        <h4>Voice Commands</h4>
+        <p>"Rosa called out Tuesday. Find someone for the Patterson shift." The system transcribes it,
+        creates a task, and starts working on it before you park.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">At the desk</div>
+      <div class="t-line"><div class="t-dot teal"></div></div>
+      <div class="t-body">
+        <h4>Your Computer</h4>
+        <p>A full dashboard view. Review what the system has done, approve pending actions,
+        write detailed care plans, run reports. Everything in one place.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Text message</div>
+      <div class="t-line"><div class="t-dot plum"></div></div>
+      <div class="t-body">
+        <h4>Messaging</h4>
+        <p>Send a text to the system from your regular phone. "Who's covering Johnson tomorrow?"
+        It reads the message, checks the schedule, and texts you back.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Automatic</div>
+      <div class="t-line"><div class="t-dot sage"></div></div>
+      <div class="t-body">
+        <h4>Scheduled Tasks</h4>
+        <p>Things that should happen on their own — check for expiring certifications every Monday,
+        generate the weekly billing report on Friday, send shift reminders the night before.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 03 · THE COMMAND CENTER ═════════════════════════════ -->
+<section class="flow-section">
+  <div class="flow-container">
+    <div class="section-header reveal">
+      <div class="section-num">03 — How It All Connects</div>
+      <h2 class="section-title">The Command Center</h2>
+      <p class="section-desc">
+        Everything flows through one system. You put in what you need. The coordinator decides
+        what to hand to a person and what to hand to an AI. Everything gets documented.
+      </p>
+    </div>
+
+    <div class="system-diagram reveal">
+      <div class="diagram-bg"></div>
+      <div class="diagram-content">
+
+        <!-- You -->
+        <div class="diagram-row">
+          <div class="d-label">You — wherever you are</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node gold">Phone</div>
+          <div class="d-node gold">Voice</div>
+          <div class="d-node gold">Computer</div>
+          <div class="d-node gold">Text</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- Your Records -->
+        <div class="diagram-row">
+          <div class="d-label">Your Records — organized notes the system understands</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node teal">Clients</div>
+          <div class="d-node teal">Caregivers</div>
+          <div class="d-node teal big">Task Requests</div>
+          <div class="d-node teal">Schedules</div>
+          <div class="d-node teal">Care Plans</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- The Coordinator -->
+        <div class="diagram-row">
+          <div class="d-label">The Coordinator — reads your records, decides what to do</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node coral big">AI Assistant</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- People + AI -->
+        <div class="diagram-row">
+          <div class="d-label">Who does the work</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node plum">Text a Caregiver</div>
+          <div class="d-node plum">Email a Family</div>
+          <div class="d-node plum">Generate a Report</div>
+          <div class="d-node plum">Update the Schedule</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- Everything Documented -->
+        <div class="diagram-row">
+          <div class="d-label">Everything comes back — documented, searchable, audit-ready</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node sage">Visit Logs</div>
+          <div class="d-node sage">Compliance Records</div>
+          <div class="d-node sage">Billing Reports</div>
+          <div class="d-node sage">Communication History</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "Write a note on your phone at a client's house. By the time you're back at the office,
+      the caregiver has been notified, the schedule is updated, and the documentation is filed."
+      <cite>— That's what the system does</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 04 · A DAY IN THE LIFE ═════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">04 — A Day in the Life</div>
+    <h2 class="section-title">Real Situations, Handled</h2>
+    <p class="section-desc">
+      These aren't hypotheticals. Every home health care agency deals with exactly these situations
+      every single day. Here's how the system handles each one.
+    </p>
+  </div>
+
+  <div class="scenario-grid reveal">
+    <div class="scenario-card morning">
+      <div class="scenario-timing">&#9788; 6:30 AM — Before you're even in the office</div>
+      <h4>Caregiver Calls Out Sick</h4>
+      <p>Rosa texts that she can't make her 8am shift. The system sees the message, checks who
+      else has dementia care certification and is available, texts the top three matches, and updates you
+      when someone confirms. You wake up to "Handled — Maria is covering."</p>
+      <div class="scenario-who both">AI + Your Caregivers</div>
+    </div>
+
+    <div class="scenario-card morning">
+      <div class="scenario-timing">&#9788; 8:00 AM — Start of day</div>
+      <h4>Daily Briefing</h4>
+      <p>When you sit down with your coffee, there's a summary waiting: 12 shifts active today,
+      one coverage gap flagged for Thursday, two certifications expiring this month,
+      yesterday's visits all confirmed. Nothing missed.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+
+    <div class="scenario-card urgent">
+      <div class="scenario-timing">&#9888; 11:00 AM — Urgent</div>
+      <h4>New Client Intake</h4>
+      <p>You get a referral call. You jot down the basics on your phone: name, address, care needs,
+      start date. The system creates the client profile, drafts a preliminary care plan,
+      identifies three caregivers who'd be a good match, and queues up the intake paperwork.</p>
+      <div class="scenario-who both">AI + You review & approve</div>
+    </div>
+
+    <div class="scenario-card auto">
+      <div class="scenario-timing">&#8635; Runs every evening</div>
+      <h4>Shift Reminders</h4>
+      <p>At 7pm each night, the system texts every caregiver with their next-day schedule:
+      client name, address, shift time, any special notes. No more no-shows because someone forgot.
+      If a caregiver doesn't confirm, you get an alert.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+
+    <div class="scenario-card weekly">
+      <div class="scenario-timing">&#8635; Every Friday at 5pm</div>
+      <h4>Weekly Compliance Report</h4>
+      <p>The system pulls every visit log from the week, cross-references with the schedule,
+      flags any missed visits, calculates hours, and generates a report that's ready for your files
+      or for the state if they come knocking.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+
+    <div class="scenario-card weekly">
+      <div class="scenario-timing">&#8635; Every Monday morning</div>
+      <h4>Certification Watch</h4>
+      <p>Checks every caregiver's certification dates. If anything expires within 30 days,
+      sends them a reminder with instructions. If within 7 days, alerts you directly.
+      No more scrambling when an auditor shows up.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 05 · CAPABILITIES ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">05 — What It Handles</div>
+    <h2 class="section-title">Built for Care Agencies</h2>
+    <p class="section-desc">
+      Under the hood, the system has dozens of capabilities. Here's what matters to you —
+      grouped by the parts of your business they support.
+    </p>
+  </div>
+
+  <div class="cap-map reveal">
+    <div class="cap-group scheduling">
+      <h4>Scheduling</h4>
+      <ul class="cap-list">
+        <li>Match caregivers to clients</li>
+        <li>Handle call-outs and replacements</li>
+        <li>Detect coverage gaps</li>
+        <li>Manage availability and preferences</li>
+        <li>Recurring schedule patterns</li>
+      </ul>
+    </div>
+
+    <div class="cap-group comms">
+      <h4>Communication</h4>
+      <ul class="cap-list">
+        <li>Text caregivers and families</li>
+        <li>Send email updates and summaries</li>
+        <li>Shift reminders and confirmations</li>
+        <li>Escalation alerts to you</li>
+        <li>Voice command input</li>
+      </ul>
+    </div>
+
+    <div class="cap-group docs">
+      <h4>Documentation</h4>
+      <ul class="cap-list">
+        <li>Auto-generate care plans</li>
+        <li>Visit log tracking</li>
+        <li>Incident report filing</li>
+        <li>Intake paperwork drafts</li>
+        <li>Searchable record history</li>
+      </ul>
+    </div>
+
+    <div class="cap-group oversight">
+      <h4>Compliance</h4>
+      <ul class="cap-list">
+        <li>Certification expiry monitoring</li>
+        <li>Training completion tracking</li>
+        <li>State-ready audit reports</li>
+        <li>Visit verification</li>
+        <li>Incident documentation</li>
+      </ul>
+    </div>
+
+    <div class="cap-group finance">
+      <h4>Billing & Hours</h4>
+      <ul class="cap-list">
+        <li>Automatic hour calculation</li>
+        <li>Weekly billing summaries</li>
+        <li>Overtime flagging</li>
+        <li>Client billing reports</li>
+        <li>Payroll data export</li>
+      </ul>
+    </div>
+
+    <div class="cap-group growth">
+      <h4>Intelligence</h4>
+      <ul class="cap-list">
+        <li>Caregiver-client match scoring</li>
+        <li>Workload balancing</li>
+        <li>Pattern recognition (frequent call-outs)</li>
+        <li>Client satisfaction tracking</li>
+        <li>Growth capacity analysis</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 06 · BEFORE & AFTER ════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">06 — The Difference</div>
+    <h2 class="section-title">Before and After</h2>
+    <p class="section-desc">
+      You know the friction. You live with it every day.
+      Here's what changes.
+    </p>
+  </div>
+
+  <div class="compare-grid reveal">
+    <div class="compare-col before">
+      <div class="compare-label">How it works now</div>
+      <div class="compare-item">Caregiver calls out — you're on the phone for an hour finding a replacement</div>
+      <div class="compare-item">New client referral — intake paperwork takes half a day</div>
+      <div class="compare-item">Compliance audit — scramble to pull records from three different systems</div>
+      <div class="compare-item">Certification expiring — you find out after it's already lapsed</div>
+      <div class="compare-item">Missed visit — nobody notices until the family calls to complain</div>
+      <div class="compare-item">Billing — someone manually tallies hours from paper timesheets</div>
+      <div class="compare-item">Scheduling conflicts — discovered when two caregivers show up at the same client</div>
+    </div>
+
+    <div class="compare-col after">
+      <div class="compare-label">How it works with the system</div>
+      <div class="compare-item">Replacement found and confirmed automatically before you finish breakfast</div>
+      <div class="compare-item">Jot basics on your phone — care plan drafted, matches suggested, paperwork queued</div>
+      <div class="compare-item">Every visit logged, every record searchable, audit report generated on demand</div>
+      <div class="compare-item">30-day, 14-day, 7-day warnings sent automatically to the caregiver and to you</div>
+      <div class="compare-item">Visit confirmations required — you're alerted within 15 minutes of a no-show</div>
+      <div class="compare-item">Hours calculated from visit logs, billing summary generated every Friday</div>
+      <div class="compare-item">Conflicts detected when the schedule is created, not when they happen</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 07 · THE APPLIANCE ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">07 — The Appliance</div>
+    <h2 class="section-title">A Box in Your Office</h2>
+    <p class="section-desc">
+      This isn't another monthly subscription that someone else controls.
+      It's a small, quiet computer that sits in your office and runs everything.
+      Your data. Your system. Always on.
+    </p>
+  </div>
+
+  <div class="appliance-box reveal">
+    <div class="appliance-bg"></div>
+    <div class="appliance-content">
+      <div class="appliance-visual">
+        <div class="appliance-icon">
+          <div class="appliance-icon-inner">&#9618;</div>
+        </div>
+        <div class="appliance-pulse">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <span class="pulse-label">Always running</span>
+        </div>
+      </div>
+      <div class="appliance-details">
+        <h3>Your Command Center</h3>
+        <p>
+          A compact machine — roughly the size of a thick paperback — that sits on a shelf
+          or behind your monitor. It runs the AI assistant, stores your records, sends the messages,
+          generates the reports.
+        </p>
+        <p>
+          No cloud dependency for your core data. No per-seat pricing. No vendor deciding
+          to triple their rates next year. You own it.
+        </p>
+        <ul class="appliance-specs">
+          <li><span>Your data stays</span> <span>In your office</span></li>
+          <li><span>Monthly software fees</span> <span>None</span></li>
+          <li><span>Setup</span> <span>Plug in and go</span></li>
+          <li><span>AI processing</span> <span>On-device + cloud hybrid</span></li>
+          <li><span>Internet required</span> <span>For texts and emails only</span></li>
+          <li><span>Backup</span> <span>Automatic, encrypted</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 08 · THE VISION ════════════════════════════════════ -->
+<section class="section" style="padding-bottom: 2rem;">
+  <div class="section-header reveal">
+    <div class="section-num">08 — The Vision</div>
+    <h2 class="section-title">Write It. Speak It. It's Handled.</h2>
+    <p class="section-desc">
+      The distance between "I need this done" and "it's done" should be as short as possible.
+      That's what this system closes.
+    </p>
+  </div>
+
+  <div class="pull-quote reveal">
+    A new client call becomes a care plan. A call-out becomes a covered shift.
+    A compliance deadline becomes a filed report. All through simple notes you write
+    the way you already think — on your phone, at your desk, or out loud while you drive.
+    <cite>— One system, no juggling</cite>
+  </div>
+
+  <div class="pull-quote reveal" style="border-left-color: var(--teal-dim);">
+    The real value isn't the technology. It's the hours you get back every week.
+    The call-outs that handle themselves. The audits you're always ready for.
+    The caregivers who show up because they got a reminder. The families who trust you
+    because nothing ever slips through the cracks.
+    <cite>— What it means for your agency</cite>
+  </div>
+
+  <div class="sample-doc reveal">
+    <div class="sample-doc-title">How the whole cycle works</div>
+    <pre>
+<span class="heading">You write:</span>    <span class="value">"New client. Margaret Chen. 82. Lives alone in Oak Park.</span>
+<span class="value">               Needs help with daily living. Daughter Susan is primary contact.</span>
+<span class="value">               Start next Monday."</span>
+
+<span class="heading">The system:</span>  <span class="note">Creates a client profile for Margaret</span>
+              <span class="note">Drafts a care plan from the details you gave</span>
+              <span class="note">Finds 3 available caregivers near Oak Park with relevant experience</span>
+              <span class="note">Queues intake paperwork for your review</span>
+              <span class="note">Sends you a summary: "Margaret Chen — ready for your approval"</span>
+
+<span class="heading">You review:</span>  <span class="value">Approve the care plan. Pick the caregiver. Done.</span>
+
+<span class="heading">The system:</span>  <span class="note">Notifies the caregiver with the address, schedule, and care notes</span>
+              <span class="note">Sends Susan an introduction email with the caregiver's name and photo</span>
+              <span class="note">Adds Margaret to the weekly schedule</span>
+              <span class="note">Sets up visit confirmation tracking starting Monday</span>
+              <span class="note">Files everything for compliance</span></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═════════════════════════════════════════ -->
+<div class="footer">
+  <p>Soederpop Systems — <a href="https://www.soederpop.com">soederpop.com</a></p>
+  <p style="margin-top:0.5rem; font-size:0.6rem; opacity:0.5;">Version: Steady Compass</p>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

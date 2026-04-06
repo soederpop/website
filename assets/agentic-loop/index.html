@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Agentic Loop — Soederpop Systems Architecture</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --bg-card: #111118;
+    --bg-card-hover: #16161f;
+    --border: #1e1e2a;
+    --border-bright: #2a2a3a;
+    --text: #c8c8d4;
+    --text-dim: #6a6a7a;
+    --text-bright: #e8e8f0;
+    --accent-amber: #f0a830;
+    --accent-amber-dim: #a07020;
+    --accent-cyan: #40c8e0;
+    --accent-cyan-dim: #206878;
+    --accent-rose: #e04070;
+    --accent-rose-dim: #802040;
+    --accent-lime: #80d040;
+    --accent-lime-dim: #406820;
+    --accent-violet: #a060f0;
+    --accent-violet-dim: #503080;
+    --accent-blue: #4080f0;
+    --accent-blue-dim: #203868;
+    --glow-amber: rgba(240, 168, 48, 0.15);
+    --glow-cyan: rgba(64, 200, 224, 0.12);
+    --glow-rose: rgba(224, 64, 112, 0.12);
+    --glow-violet: rgba(160, 96, 240, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise texture overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow-amber) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    animation: drift 20s ease-in-out infinite;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--glow-cyan) 0%, transparent 70%);
+    bottom: -100px;
+    left: -150px;
+    animation: drift 25s ease-in-out infinite reverse;
+  }
+
+  @keyframes drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -30px) scale(1.05); }
+    66% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 900px;
+  }
+
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent-amber);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    background: linear-gradient(135deg, var(--accent-amber), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .scroll-hint {
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1s, pulse 2s ease-in-out infinite 1.8s;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--text-dim), transparent);
+    margin: 0.75rem auto 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Sections ── */
+  .section {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .section-header {
+    margin-bottom: 4rem;
+    position: relative;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent-amber-dim);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 640px;
+  }
+
+  /* ── Content Models Grid ── */
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .model-card {
+    background: var(--bg-card);
+    padding: 1.75rem;
+    transition: background 0.3s ease, transform 0.2s ease;
+    position: relative;
+    cursor: default;
+  }
+
+  .model-card:hover {
+    background: var(--bg-card-hover);
+    z-index: 1;
+  }
+
+  .model-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+  }
+
+  .model-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .model-card p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .model-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+  }
+
+  .meta-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Flow Diagram ── */
+  .flow-section {
+    padding: 6rem 2rem 4rem;
+    position: relative;
+  }
+
+  .flow-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .flow-layer {
+    position: relative;
+    padding: 2rem 0;
+  }
+
+  .flow-layer::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1px;
+    height: 2rem;
+    background: linear-gradient(to bottom, transparent, var(--border-bright));
+  }
+
+  .flow-layer:first-child::before {
+    display: none;
+  }
+
+  .layer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .layer-nodes {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .flow-node {
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    border: 1px solid;
+    position: relative;
+    transition: all 0.25s ease;
+    cursor: default;
+  }
+
+  .flow-node:hover {
+    transform: translateY(-2px);
+  }
+
+  .flow-node.input { background: rgba(240, 168, 48, 0.08); border-color: var(--accent-amber-dim); color: var(--accent-amber); }
+  .flow-node.input:hover { background: rgba(240, 168, 48, 0.15); box-shadow: 0 4px 20px var(--glow-amber); }
+
+  .flow-node.content { background: rgba(64, 200, 224, 0.08); border-color: var(--accent-cyan-dim); color: var(--accent-cyan); }
+  .flow-node.content:hover { background: rgba(64, 200, 224, 0.15); box-shadow: 0 4px 20px var(--glow-cyan); }
+
+  .flow-node.orchestrator { background: rgba(224, 64, 112, 0.08); border-color: var(--accent-rose-dim); color: var(--accent-rose); }
+  .flow-node.orchestrator:hover { background: rgba(224, 64, 112, 0.15); box-shadow: 0 4px 20px var(--glow-rose); }
+
+  .flow-node.agent { background: rgba(160, 96, 240, 0.08); border-color: var(--accent-violet-dim); color: var(--accent-violet); }
+  .flow-node.agent:hover { background: rgba(160, 96, 240, 0.15); box-shadow: 0 4px 20px var(--glow-violet); }
+
+  .flow-node.infra { background: rgba(128, 208, 64, 0.08); border-color: var(--accent-lime-dim); color: var(--accent-lime); }
+  .flow-node.infra:hover { background: rgba(128, 208, 64, 0.15); }
+
+  .flow-node.output { background: rgba(64, 128, 240, 0.08); border-color: var(--accent-blue-dim); color: var(--accent-blue); }
+  .flow-node.output:hover { background: rgba(64, 128, 240, 0.15); }
+
+  /* ── Connector Lines (animated) ── */
+  .connector {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0;
+    position: relative;
+  }
+
+  .connector-line {
+    width: 1px;
+    height: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .connector-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--border-bright), var(--border));
+  }
+
+  .connector-line::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, transparent, var(--accent-amber), transparent);
+    animation: flowDown 2.5s ease-in-out infinite;
+  }
+
+  @keyframes flowDown {
+    0% { top: -50%; }
+    100% { top: 150%; }
+  }
+
+  .connector-fan {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    padding: 0.5rem 0;
+  }
+
+  .connector-fan .connector-line {
+    transform-origin: top center;
+  }
+
+  /* ── Task Lifecycle ── */
+  .lifecycle {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 2rem;
+  }
+
+  .lifecycle-step {
+    display: grid;
+    grid-template-columns: 80px 40px 1fr;
+    align-items: start;
+    gap: 0;
+    min-height: 120px;
+  }
+
+  .step-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-align: right;
+    padding-top: 0.3rem;
+    padding-right: 1rem;
+  }
+
+  .step-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .step-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-bright);
+  }
+
+  .step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .step-dot.amber { background: var(--accent-amber); box-shadow: 0 0 12px var(--glow-amber); }
+  .step-dot.cyan { background: var(--accent-cyan); box-shadow: 0 0 12px var(--glow-cyan); }
+  .step-dot.rose { background: var(--accent-rose); box-shadow: 0 0 12px var(--glow-rose); }
+  .step-dot.violet { background: var(--accent-violet); box-shadow: 0 0 12px var(--glow-violet); }
+  .step-dot.lime { background: var(--accent-lime); }
+  .step-dot.blue { background: var(--accent-blue); }
+
+  .step-content {
+    padding: 0 0 2rem 1.25rem;
+  }
+
+  .step-content h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+  }
+
+  .step-content p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .step-content code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    background: rgba(255,255,255,0.05);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    color: var(--accent-amber);
+  }
+
+  /* ── Repeatable Tasks ── */
+  .tasks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .task-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .task-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .task-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .task-card.schedule::before { background: linear-gradient(90deg, var(--accent-amber), var(--accent-amber-dim)); }
+  .task-card.oneshot::before { background: linear-gradient(90deg, var(--accent-violet), var(--accent-violet-dim)); }
+
+  .task-schedule {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .task-card.schedule .task-schedule { color: var(--accent-amber); }
+  .task-card.oneshot .task-schedule { color: var(--accent-violet); }
+
+  .task-card h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .task-card p {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .task-agent {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--accent-cyan);
+    background: rgba(64, 200, 224, 0.08);
+    border: 1px solid var(--accent-cyan-dim);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  /* ── Container Feature Map ── */
+  .features-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .feature-cluster {
+    background: var(--bg-card);
+    padding: 1.25rem;
+  }
+
+  .feature-cluster h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .feature-cluster.io h4 { color: var(--accent-amber); }
+  .feature-cluster.ai h4 { color: var(--accent-violet); }
+  .feature-cluster.infra h4 { color: var(--accent-lime); }
+  .feature-cluster.data h4 { color: var(--accent-cyan); }
+  .feature-cluster.comms h4 { color: var(--accent-rose); }
+  .feature-cluster.google h4 { color: var(--accent-blue); }
+
+  .feature-list {
+    list-style: none;
+  }
+
+  .feature-list li {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    padding: 0.2rem 0;
+    transition: color 0.2s;
+  }
+
+  .feature-list li:hover {
+    color: var(--text);
+  }
+
+  .feature-list li::before {
+    content: '›';
+    margin-right: 0.4rem;
+    opacity: 0.4;
+  }
+
+  /* ── Big System Diagram ── */
+  .system-diagram {
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 20% 30%, var(--glow-amber), transparent),
+      radial-gradient(ellipse 500px 300px at 80% 70%, var(--glow-cyan), transparent),
+      radial-gradient(ellipse 400px 400px at 50% 50%, var(--glow-violet), transparent);
+    opacity: 0.3;
+  }
+
+  .diagram-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .diagram-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .d-label {
+    width: 100%;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .d-node {
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    min-width: 100px;
+    transition: all 0.3s;
+  }
+
+  .d-node:hover { transform: scale(1.05); }
+
+  .d-node.amber { border-color: var(--accent-amber-dim); color: var(--accent-amber); background: rgba(240,168,48,0.06); }
+  .d-node.cyan { border-color: var(--accent-cyan-dim); color: var(--accent-cyan); background: rgba(64,200,224,0.06); }
+  .d-node.rose { border-color: var(--accent-rose-dim); color: var(--accent-rose); background: rgba(224,64,112,0.06); }
+  .d-node.violet { border-color: var(--accent-violet-dim); color: var(--accent-violet); background: rgba(160,96,240,0.06); }
+  .d-node.lime { border-color: var(--accent-lime-dim); color: var(--accent-lime); background: rgba(128,208,64,0.06); }
+  .d-node.blue { border-color: var(--accent-blue-dim); color: var(--accent-blue); background: rgba(64,128,240,0.06); }
+
+  .d-node.big {
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    min-width: 160px;
+  }
+
+  .d-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0.75rem 0;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    opacity: 0.4;
+  }
+
+  .d-arrows span {
+    display: inline-block;
+    animation: arrowPulse 2s ease-in-out infinite;
+  }
+
+  .d-arrows span:nth-child(2) { animation-delay: 0.15s; }
+  .d-arrows span:nth-child(3) { animation-delay: 0.3s; }
+  .d-arrows span:nth-child(4) { animation-delay: 0.45s; }
+  .d-arrows span:nth-child(5) { animation-delay: 0.6s; }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ── Code block ── */
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+
+  .code-block pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.65;
+    color: var(--text-dim);
+  }
+
+  .code-block .kw { color: var(--accent-rose); }
+  .code-block .fn { color: var(--accent-amber); }
+  .code-block .str { color: var(--accent-lime); }
+  .code-block .cmt { color: #444455; font-style: italic; }
+  .code-block .type { color: var(--accent-cyan); }
+  .code-block .var { color: var(--text); }
+
+  /* ── Quote ── */
+  .pull-quote {
+    border-left: 2px solid var(--accent-amber-dim);
+    padding: 1.5rem 2rem;
+    margin: 3rem 0;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-style: normal;
+    color: var(--text-dim);
+    margin-top: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── Scroll Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .section { padding: 4rem 1.25rem; }
+    .lifecycle-step { grid-template-columns: 60px 30px 1fr; }
+    .diagram-content { padding: 2rem 1rem; }
+    .d-node { min-width: 80px; font-size: 0.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ HERO ════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-label">Soederpop Systems Architecture</div>
+    <h1>The <em>Agentic</em> Loop</h1>
+    <p class="hero-sub">
+      Markdown documents become executable intent. Content models define structure.
+      AI agents read, reason, build, and deploy — orchestrated by a single runtime.
+    </p>
+    <div class="scroll-hint">Scroll to explore</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ 01 · CONTENT MODELS ════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">01 — Foundation</div>
+    <h2 class="section-title">Content Models</h2>
+    <p class="section-desc">
+      Everything starts as structured markdown. Each document type has a schema, sections with extractors,
+      relationships to other models, and computed properties. This is your single source of truth.
+    </p>
+  </div>
+
+  <div class="models-grid reveal">
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(240,168,48,0.12); color: var(--accent-amber);">G</div>
+      <h3>Goal</h3>
+      <p>North-star objectives with success criteria and motivation. Short, medium, or long horizon.</p>
+      <div class="model-meta">
+        <span class="meta-tag">horizon</span>
+        <span class="meta-tag">§ success criteria</span>
+        <span class="meta-tag">§ motivation</span>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(64,200,224,0.12); color: var(--accent-cyan);">I</div>
+      <h3>Idea</h3>
+      <p>Sparks aligned to goals. Evolve from raw spark → exploring → promoted to a plan.</p>
+      <div class="model-meta">
+        <span class="meta-tag">status</span>
+        <span class="meta-tag">tags</span>
+        <span class="meta-tag">→ belongsTo Goal</span>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(160,96,240,0.12); color: var(--accent-violet);">Pj</div>
+      <h3>Project</h3>
+      <p>Orchestrates multiple plans in sequence. Tracks execution order with parallel plan support.</p>
+      <div class="model-meta">
+        <span class="meta-tag">status</span>
+        <span class="meta-tag">§ execution</span>
+        <span class="meta-tag">← hasMany Plans</span>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(224,64,112,0.12); color: var(--accent-rose);">Pl</div>
+      <h3>Plan</h3>
+      <p>Claude Code plan documents with references and test criteria. Approved plans get built.</p>
+      <div class="model-meta">
+        <span class="meta-tag">status</span>
+        <span class="meta-tag">costUsd</span>
+        <span class="meta-tag">§ verification</span>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(128,208,64,0.12); color: var(--accent-lime);">T</div>
+      <h3>Task</h3>
+      <p>Executable prompts with scheduling. Repeatable or one-shot. The bridge between content and agents.</p>
+      <div class="model-meta">
+        <span class="meta-tag">schedule</span>
+        <span class="meta-tag">agent</span>
+        <span class="meta-tag">repeatable</span>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(64,128,240,0.12); color: var(--accent-blue);">Pr</div>
+      <h3>Prompt</h3>
+      <p>Reusable prompt templates with input variables. Fed to any coding assistant via <code>luca prompt</code>.</p>
+      <div class="model-meta">
+        <span class="meta-tag">inputs</span>
+        <span class="meta-tag">tags</span>
+        <span class="meta-tag">{{vars}}</span>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(240,168,48,0.08); color: var(--accent-amber-dim);">D</div>
+      <h3>Domain</h3>
+      <p>DNS domains with subdomain service configs — cwd, command, port, probe intervals.</p>
+      <div class="model-meta">
+        <span class="meta-tag">provider</span>
+        <span class="meta-tag">§ subdomains</span>
+        <span class="meta-tag">status</span>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-icon" style="background: rgba(64,200,224,0.08); color: var(--accent-cyan-dim);">R</div>
+      <h3>Report</h3>
+      <p>Long-form writeups from you or the AI. Research findings, analyses, technical deep dives.</p>
+      <div class="model-meta">
+        <span class="meta-tag">goal</span>
+        <span class="meta-tag">tags</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block reveal" style="margin-top:2rem;">
+    <pre><span class="cmt">// The relationship graph drives everything</span>
+<span class="type">Goal</span> <span class="kw">←</span> <span class="type">Idea</span> <span class="kw">→</span> <span class="fn">promoted</span> <span class="kw">→</span> <span class="type">Project</span> <span class="kw">←→</span> <span class="type">Plan[]</span>
+                                <span class="kw">↑</span>
+                          <span class="type">Task</span> <span class="kw">→</span> <span class="fn">schedule</span> <span class="kw">→</span> <span class="var">agent execution</span>
+                          <span class="type">Domain</span> <span class="kw">→</span> <span class="fn">subdomains</span> <span class="kw">→</span> <span class="var">service configs</span></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 02 · INPUT CHANNELS ═════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">02 — Entry Points</div>
+    <h2 class="section-title">How Intent Enters the System</h2>
+    <p class="section-desc">
+      Tasks and ideas can originate from anywhere — your phone, your voice, your editor, a schedule,
+      or a Telegram message. Each channel feeds into the same content model layer.
+    </p>
+  </div>
+
+  <div class="lifecycle reveal">
+    <div class="lifecycle-step">
+      <div class="step-time">On the go</div>
+      <div class="step-line"><div class="step-dot amber"></div></div>
+      <div class="step-content">
+        <h4>Contentbase Mobile App</h4>
+        <p>Create tasks, ideas, and plans from your phone. The app talks to the contentbase HTTP API.
+        Write a quick task in the field, and it's waiting when the agent picks it up.</p>
+      </div>
+    </div>
+
+    <div class="lifecycle-step">
+      <div class="step-time">At desk</div>
+      <div class="step-line"><div class="step-dot cyan"></div></div>
+      <div class="step-content">
+        <h4>Editor + Claude Code</h4>
+        <p>Write structured markdown documents directly. Claude Code sessions can create plans, projects,
+        and tasks through the MCP server or by editing files in the <code>docs/</code> folder.</p>
+      </div>
+    </div>
+
+    <div class="lifecycle-step">
+      <div class="step-time">Voice</div>
+      <div class="step-line"><div class="step-dot rose"></div></div>
+      <div class="step-content">
+        <h4>luca voice + Launcher App</h4>
+        <p>A Spotlight-style native macOS app transcribes short voice commands and dispatches them
+        over IPC to <code>luca voice</code>, which routes them to registered handlers.</p>
+      </div>
+    </div>
+
+    <div class="lifecycle-step">
+      <div class="step-time">Remote</div>
+      <div class="step-line"><div class="step-dot violet"></div></div>
+      <div class="step-content">
+        <h4>Telegram Bot</h4>
+        <p>The grammY-powered Telegram feature can receive commands from anywhere.
+        Register custom handlers that create tasks or trigger actions.</p>
+      </div>
+    </div>
+
+    <div class="lifecycle-step">
+      <div class="step-time">Scheduled</div>
+      <div class="step-line"><div class="step-dot lime"></div></div>
+      <div class="step-content">
+        <h4>Heartbeat Scheduler</h4>
+        <p>The heartbeat feature ticks on configurable intervals — every 30 minutes, hourly, three times daily,
+        end of day. Each tier can execute code plays or dispatch prompt plays to Claude Code or Codex.</p>
+      </div>
+    </div>
+
+    <div class="lifecycle-step">
+      <div class="step-time">Auto</div>
+      <div class="step-line"><div class="step-dot blue"></div></div>
+      <div class="step-content">
+        <h4>luca main — Task Scanner</h4>
+        <p>Runs continuously. Reads the <code>docs/tasks/</code> collection, matches documents by their
+        <code>schedule</code> meta field, and dispatches them to the configured agent at the right time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 03 · THE LOOP ═══════════════════════════════════════════ -->
+<section class="flow-section">
+  <div class="flow-container">
+    <div class="section-header reveal">
+      <div class="section-num">03 — The Loop</div>
+      <h2 class="section-title">From Document to Deployment</h2>
+      <p class="section-desc">
+        The agentic loop: content models describe intent, the orchestrator selects work,
+        agents execute with full container access, results flow back into content.
+      </p>
+    </div>
+
+    <div class="system-diagram reveal">
+      <div class="diagram-bg"></div>
+      <div class="diagram-content">
+
+        <!-- Input layer -->
+        <div class="diagram-row">
+          <div class="d-label">Input Channels</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node amber">Mobile App</div>
+          <div class="d-node amber">Voice</div>
+          <div class="d-node amber">Editor</div>
+          <div class="d-node amber">Telegram</div>
+          <div class="d-node amber">Schedule</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- Content Layer -->
+        <div class="diagram-row">
+          <div class="d-label">Contentbase — Structured Markdown</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node cyan">Goals</div>
+          <div class="d-node cyan">Ideas</div>
+          <div class="d-node cyan big">Tasks</div>
+          <div class="d-node cyan">Projects</div>
+          <div class="d-node cyan">Plans</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- Orchestration -->
+        <div class="diagram-row">
+          <div class="d-label">Orchestration — luca main</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node rose big">Task Scanner</div>
+          <div class="d-node rose big">Heartbeat</div>
+          <div class="d-node rose big">Service Manager</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- Agent Layer -->
+        <div class="diagram-row">
+          <div class="d-label">Agents — AI Execution</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node violet">Claude Code</div>
+          <div class="d-node violet">OpenAI Codex</div>
+          <div class="d-node violet">Luca Assistant</div>
+          <div class="d-node violet">Custom (tools.ts)</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- Container -->
+        <div class="diagram-row">
+          <div class="d-label">Luca Container — 60+ Features</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node lime">fs</div>
+          <div class="d-node lime">proc</div>
+          <div class="d-node lime">docker</div>
+          <div class="d-node lime">runpod</div>
+          <div class="d-node lime">ssh</div>
+          <div class="d-node lime">postgres</div>
+          <div class="d-node lime">google-*</div>
+          <div class="d-node lime">telegram</div>
+        </div>
+
+        <div class="d-arrows"><span>↓</span><span>↓</span><span>↓</span><span>↓</span></div>
+
+        <!-- Infrastructure -->
+        <div class="diagram-row">
+          <div class="d-label">Infrastructure — Compute & Delivery</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node blue">Local Servers</div>
+          <div class="d-node blue">Docker</div>
+          <div class="d-node blue">RunPod GPU</div>
+          <div class="d-node blue">Remote SSH</div>
+          <div class="d-node blue">Cloudflare</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "Write a task on your phone at a coffee shop. By the time you get home,
+      the agent has already built it, tested it, and it's running behind your domain."
+      <cite>— The promise of the agentic loop</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ 04 · TASK EXAMPLES ══════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">04 — Executable Intent</div>
+    <h2 class="section-title">Tasks as Agents</h2>
+    <p class="section-desc">
+      A task is a markdown document with frontmatter. The schedule determines when it runs.
+      The body is the prompt. The agent field determines who executes it.
+    </p>
+  </div>
+
+  <div class="tasks-grid reveal">
+    <div class="task-card schedule">
+      <div class="task-schedule">↻ Repeatable · beginning-of-day</div>
+      <h4>develop-my-ideas.md</h4>
+      <p>Evaluate current goals, review recent work context, and promote the most promising
+      idea into a full project with sequenced plans ready for approval.</p>
+      <div class="task-agent">⚡ claudeCode</div>
+    </div>
+
+    <div class="task-card schedule">
+      <div class="task-schedule">↻ Repeatable · every-half-hour</div>
+      <h4>build-the-next-approved-project</h4>
+      <p>Query contentbase for the oldest approved project. Pick up the next unbuilt plan,
+      execute it in a Claude Code session, record cost and completion status.</p>
+      <div class="task-agent">⚡ claudeCode</div>
+    </div>
+
+    <div class="task-card oneshot">
+      <div class="task-schedule">◆ One-shot</div>
+      <h4>research-zvec.md</h4>
+      <p>Investigate the ZVEC vector database from Alibaba. Evaluate integration paths
+      as a standalone luca feature or a contentbase search upgrade. Write a report.</p>
+      <div class="task-agent">⚡ claudeCode</div>
+    </div>
+
+    <div class="task-card oneshot">
+      <div class="task-schedule">◆ One-shot</div>
+      <h4>diagram-the-agentic-loop.md</h4>
+      <p>Generate a visual explainer of the full system architecture — content models,
+      orchestration, agents, infrastructure. You're reading the output right now.</p>
+      <div class="task-agent">⚡ claudeCode</div>
+    </div>
+
+    <div class="task-card schedule">
+      <div class="task-schedule">↻ Repeatable · end-of-day</div>
+      <h4>daily-summary.md</h4>
+      <p style="color:var(--accent-amber-dim); font-style:italic;">Potential: Summarize what was built, committed, deployed. Update goals progress.
+      Generate a report in docs/reports with the day's outcomes.</p>
+      <div class="task-agent">⚡ luca assistant</div>
+    </div>
+
+    <div class="task-card schedule">
+      <div class="task-schedule">↻ Repeatable · hourly</div>
+      <h4>health-check.md</h4>
+      <p style="color:var(--accent-amber-dim); font-style:italic;">Potential: Probe all live domain services. If any are down, attempt restart.
+      Log status to a report. Escalate via Telegram if persistent failure.</p>
+      <div class="task-agent">⚡ luca assistant</div>
+    </div>
+  </div>
+
+  <div class="code-block reveal">
+    <pre><span class="cmt">// Task document anatomy (frontmatter + prompt body)</span>
+<span class="kw">---</span>
+<span class="type">agent</span>: <span class="str">claudeCode</span>
+<span class="type">schedule</span>: <span class="str">beginning-of-day</span>
+<span class="type">repeatable</span>: <span class="str">true</span>
+<span class="type">tags</span>: [<span class="str">planning</span>, <span class="str">ideas</span>]
+<span class="kw">---</span>
+
+<span class="cmt"># Develop My Ideas</span>
+
+<span class="var">Use the contentbase MCP to query my current goals and ideas.</span>
+<span class="var">Find an idea with status "exploring" that aligns to an active goal.</span>
+<span class="var">Promote it: create a Project with sequenced Plans.</span>
+<span class="var">Set each plan's status to "pending" for my review.</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════════ 05 · THE CONTAINER ═════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">05 — The Runtime</div>
+    <h2 class="section-title">Luca Container</h2>
+    <p class="section-desc">
+      Every agent, command, and server runs inside a Luca container — a dependency-injection runtime
+      with 60+ features. Agents get full access to infrastructure through a unified interface.
+    </p>
+  </div>
+
+  <div class="features-map reveal">
+    <div class="feature-cluster io">
+      <h4>File & Data</h4>
+      <ul class="feature-list">
+        <li>fs</li>
+        <li>file-manager</li>
+        <li>content-db</li>
+        <li>disk-cache</li>
+        <li>json-tree</li>
+        <li>yaml-tree</li>
+        <li>grep</li>
+      </ul>
+    </div>
+
+    <div class="feature-cluster infra">
+      <h4>Infrastructure</h4>
+      <ul class="feature-list">
+        <li>docker</li>
+        <li>runpod (GPU)</li>
+        <li>secure-shell</li>
+        <li>port-exposer</li>
+        <li>networking</li>
+        <li>ipc-socket</li>
+        <li>process-manager</li>
+      </ul>
+    </div>
+
+    <div class="feature-cluster ai">
+      <h4>AI & Agents</h4>
+      <ul class="feature-list">
+        <li>assistant</li>
+        <li>conversation</li>
+        <li>claude-code</li>
+        <li>openai-codex</li>
+        <li>heartbeat</li>
+        <li>skills-library</li>
+        <li>openapi</li>
+      </ul>
+    </div>
+
+    <div class="feature-cluster data">
+      <h4>Data & Search</h4>
+      <ul class="feature-list">
+        <li>postgres</li>
+        <li>sqlite</li>
+        <li>nlp</li>
+        <li>esbuild</li>
+        <li>vm</li>
+        <li>python</li>
+      </ul>
+    </div>
+
+    <div class="feature-cluster comms">
+      <h4>Communication</h4>
+      <ul class="feature-list">
+        <li>telegram</li>
+        <li>tts (ElevenLabs)</li>
+        <li>launcher-app</li>
+        <li>window-manager</li>
+        <li>voice-recognition</li>
+        <li>opener</li>
+      </ul>
+    </div>
+
+    <div class="feature-cluster google">
+      <h4>Google Suite</h4>
+      <ul class="feature-list">
+        <li>google-auth</li>
+        <li>google-calendar</li>
+        <li>google-drive</li>
+        <li>google-sheets</li>
+        <li>google-docs</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-block reveal" style="margin-top:1.5rem;">
+    <pre><span class="cmt">// A custom luca assistant's tools.ts handler</span>
+<span class="cmt">// Full container access — no extra dependencies needed</span>
+<span class="kw">export default</span> <span class="kw">function</span> <span class="fn">tools</span>(<span class="var">container</span>) {
+  <span class="kw">const</span> <span class="var">fs</span> = <span class="var">container</span>.<span class="fn">feature</span>(<span class="str">'fs'</span>)
+  <span class="kw">const</span> <span class="var">docker</span> = <span class="var">container</span>.<span class="fn">feature</span>(<span class="str">'docker'</span>)
+  <span class="kw">const</span> <span class="var">ssh</span> = <span class="var">container</span>.<span class="fn">feature</span>(<span class="str">'secure-shell'</span>)
+  <span class="kw">const</span> <span class="var">gpu</span> = <span class="var">container</span>.<span class="fn">feature</span>(<span class="str">'runpod'</span>)
+  <span class="kw">const</span> <span class="var">db</span> = <span class="var">container</span>.<span class="fn">feature</span>(<span class="str">'postgres'</span>)
+
+  <span class="kw">return</span> {
+    <span class="fn">deployToProduction</span>: <span class="kw">async</span> () => { <span class="cmt">/* ssh + docker + port-exposer */</span> },
+    <span class="fn">trainModel</span>: <span class="kw">async</span> () => { <span class="cmt">/* runpod + fs + disk-cache */</span> },
+    <span class="fn">queryKnowledge</span>: <span class="kw">async</span> () => { <span class="cmt">/* postgres + grep + nlp */</span> },
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ 06 · ALWAYS ON ══════════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">06 — Always Running</div>
+    <h2 class="section-title">The Persistent Daemons</h2>
+    <p class="section-desc">
+      Three long-running processes form the backbone. They start when your machine boots
+      and provide continuous orchestration, voice control, and web serving.
+    </p>
+  </div>
+
+  <div class="tasks-grid reveal">
+    <div class="task-card" style="border-color: var(--accent-rose-dim);">
+      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+        <div style="width:8px; height:8px; border-radius:50%; background:var(--accent-rose); box-shadow: 0 0 8px var(--accent-rose); animation: pulse 2s infinite;"></div>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--accent-rose);">luca main</span>
+      </div>
+      <h4>Portfolio Orchestrator</h4>
+      <p>Reads Domain documents. Spawns service processes for each subdomain.
+      Health-checks every 60 seconds. Auto-restarts failures.
+      <strong style="color:var(--accent-amber);">+ Task Scanner</strong>: polls docs/tasks for scheduled work,
+      dispatches to the right agent at the right time.</p>
+    </div>
+
+    <div class="task-card" style="border-color: var(--accent-amber-dim);">
+      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+        <div style="width:8px; height:8px; border-radius:50%; background:var(--accent-amber); box-shadow: 0 0 8px var(--accent-amber); animation: pulse 2s infinite 0.5s;"></div>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--accent-amber);">luca voice</span>
+      </div>
+      <h4>Voice Command Router</h4>
+      <p>Listens on an IPC socket for transcribed voice commands from the native macOS launcher.
+      Routes commands to registered handlers. Supports ElevenLabs and Chatterbox TTS for responses.</p>
+    </div>
+
+    <div class="task-card" style="border-color: var(--accent-cyan-dim);">
+      <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+        <div style="width:8px; height:8px; border-radius:50%; background:var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); animation: pulse 2s infinite 1s;"></div>
+        <span style="font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--accent-cyan);">cloudflared</span>
+      </div>
+      <h4>Tunnel to the World</h4>
+      <p>Cloudflare tunnel exposes local services to the internet with SSL.
+      soederpop.com subdomains resolve through the tunnel to local ports
+      managed by <code>luca main</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ 07 · VISION ════════════════════════════════════════════════ -->
+<section class="section" style="padding-bottom:2rem;">
+  <div class="section-header reveal">
+    <div class="section-num">07 — The Vision</div>
+    <h2 class="section-title">Write, Speak, or Think It</h2>
+    <p class="section-desc">
+      The gap between intention and execution collapses. Structured documents are the API.
+      Agents are the workforce. The container is the toolbox. Infrastructure is on-demand.
+    </p>
+  </div>
+
+  <div class="pull-quote reveal">
+    A goal becomes ideas. Ideas become projects. Projects become plans.
+    Plans become running software. All through markdown, all through agents,
+    all from a phone, a voice command, or a thought typed into an editor.
+    <cite>— The full cycle, no context switching</cite>
+  </div>
+
+  <div class="code-block reveal">
+    <pre><span class="cmt">// The full lifecycle in content model terms</span>
+
+<span class="type">Goal</span>(<span class="str">"Ship a production portfolio"</span>)
+  <span class="kw">→</span> <span class="type">Idea</span>(<span class="str">"Use Contentbase for structured docs"</span>)  <span class="cmt">// spark → exploring → promoted</span>
+    <span class="kw">→</span> <span class="type">Project</span>(<span class="str">"Portfolio Site with Subdomains"</span>)
+      <span class="kw">→</span> <span class="type">Plan</span>(<span class="str">"Build www static site"</span>)              <span class="cmt">// pending → approved → completed</span>
+      <span class="kw">→</span> <span class="type">Plan</span>(<span class="str">"Set up Cloudflare tunnel"</span>)           <span class="cmt">// executed by agent</span>
+      <span class="kw">→</span> <span class="type">Plan</span>(<span class="str">"Configure domain subdomains"</span>)        <span class="cmt">// auto-deployed</span>
+        <span class="kw">→</span> <span class="type">Domain</span>(<span class="str">"soederpop.com"</span>)                 <span class="cmt">// live: 6 subdomains on ports 4100-4141</span>
+
+<span class="cmt">// Meanwhile, repeating forever:</span>
+<span class="type">Task</span>(<span class="str">"develop-my-ideas"</span>)      <span class="cmt">// beginning-of-day → finds the next spark</span>
+<span class="type">Task</span>(<span class="str">"build-next-project"</span>)    <span class="cmt">// every-half-hour → picks up approved work</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════ FOOTER ═════════════════════════════════════════════ -->
+<div class="footer">
+  <p>soederpop · luca · contentbase — the agentic loop</p>
+</div>
+
+<script>
+// Intersection Observer for scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

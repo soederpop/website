@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kitchen Pilot — Your Restaurant, One System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #100c08;
+    --bg-card: #1a1510;
+    --bg-card-hover: #221c14;
+    --border: #2a2218;
+    --border-bright: #3a3020;
+    --text: #b8a890;
+    --text-dim: #6e5e48;
+    --text-bright: #e8dcc8;
+    --copper: #c87040;
+    --copper-dim: #7a4428;
+    --copper-glow: rgba(200, 112, 64, 0.12);
+    --amber: #d4a040;
+    --amber-dim: #8a6828;
+    --amber-glow: rgba(212, 160, 64, 0.12);
+    --olive: #808040;
+    --olive-dim: #4a4a24;
+    --olive-glow: rgba(128, 128, 64, 0.10);
+    --brick: #a05040;
+    --brick-dim: #603028;
+    --brick-glow: rgba(160, 80, 64, 0.10);
+    --cream: #c8b890;
+    --cream-dim: #7a7058;
+    --cream-glow: rgba(200, 184, 144, 0.08);
+    --sage: #609060;
+    --sage-dim: #385838;
+    --sage-glow: rgba(96, 144, 96, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 120%;
+    height: 140%;
+    background:
+      radial-gradient(ellipse 700px 500px at 30% 40%, var(--copper-glow), transparent),
+      radial-gradient(ellipse 600px 400px at 70% 60%, var(--amber-glow), transparent);
+    opacity: 0.6;
+    animation: heroShift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroShift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(20px, -10px) scale(1.05); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    color: var(--copper);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    animation: fadeInUp 1.5s ease 1s both, gentleBob 3s ease-in-out infinite 2.5s;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes gentleBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── Sections ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* ── Document Type Grid ── */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .doc-card {
+    background: var(--bg-card);
+    padding: 1.75rem;
+    transition: background 0.3s ease;
+    cursor: default;
+  }
+
+  .doc-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .doc-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+  }
+
+  .doc-tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Entry Points / Timeline ── */
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 2rem;
+  }
+
+  .timeline-step {
+    display: grid;
+    grid-template-columns: 100px 40px 1fr;
+    align-items: start;
+    gap: 0;
+    min-height: 110px;
+  }
+
+  .t-when {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    text-align: right;
+    padding-top: 0.3rem;
+    padding-right: 1rem;
+  }
+
+  .t-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .t-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-bright);
+  }
+
+  .t-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .t-dot.copper { background: var(--copper); box-shadow: 0 0 12px var(--copper-glow); }
+  .t-dot.amber { background: var(--amber); box-shadow: 0 0 12px var(--amber-glow); }
+  .t-dot.brick { background: var(--brick); box-shadow: 0 0 12px var(--brick-glow); }
+  .t-dot.sage { background: var(--sage); box-shadow: 0 0 12px var(--sage-glow); }
+  .t-dot.olive { background: var(--olive); box-shadow: 0 0 12px var(--olive-glow); }
+
+  .t-body {
+    padding: 0 0 2rem 1.25rem;
+  }
+
+  .t-body h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+  }
+
+  .t-body p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── System Diagram ── */
+  .flow-section {
+    padding: 5rem 2rem 4rem;
+  }
+
+  .flow-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .system-diagram {
+    margin-top: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 25% 30%, var(--copper-glow), transparent),
+      radial-gradient(ellipse 500px 300px at 75% 70%, var(--amber-glow), transparent),
+      radial-gradient(ellipse 400px 400px at 50% 50%, var(--olive-glow), transparent);
+    opacity: 0.4;
+  }
+
+  .diagram-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .d-label {
+    width: 100%;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .d-node {
+    padding: 0.65rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    min-width: 105px;
+    transition: all 0.3s;
+  }
+
+  .d-node:hover { transform: scale(1.05); }
+
+  .d-node.copper { border-color: var(--copper-dim); color: var(--copper); background: rgba(200,112,64,0.06); }
+  .d-node.amber { border-color: var(--amber-dim); color: var(--amber); background: rgba(212,160,64,0.06); }
+  .d-node.olive { border-color: var(--olive-dim); color: var(--olive); background: rgba(128,128,64,0.06); }
+  .d-node.brick { border-color: var(--brick-dim); color: var(--brick); background: rgba(160,80,64,0.06); }
+  .d-node.cream { border-color: var(--cream-dim); color: var(--cream); background: rgba(200,184,144,0.06); }
+  .d-node.sage { border-color: var(--sage-dim); color: var(--sage); background: rgba(96,144,96,0.06); }
+
+  .d-node.big {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    min-width: 150px;
+  }
+
+  .d-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0.5rem 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    opacity: 0.4;
+  }
+
+  .d-arrows span {
+    display: inline-block;
+    animation: arrowPulse 2.5s ease-in-out infinite;
+  }
+
+  .d-arrows span:nth-child(2) { animation-delay: 0.2s; }
+  .d-arrows span:nth-child(3) { animation-delay: 0.4s; }
+  .d-arrows span:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ── Scenario Cards ── */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .scenario-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .scenario-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .scenario-card.rush::before { background: linear-gradient(90deg, var(--brick), var(--brick-dim)); }
+  .scenario-card.prep::before { background: linear-gradient(90deg, var(--copper), var(--copper-dim)); }
+  .scenario-card.auto::before { background: linear-gradient(90deg, var(--amber), var(--amber-dim)); }
+  .scenario-card.closing::before { background: linear-gradient(90deg, var(--olive), var(--olive-dim)); }
+  .scenario-card.weekly::before { background: linear-gradient(90deg, var(--sage), var(--sage-dim)); }
+  .scenario-card.forecast::before { background: linear-gradient(90deg, var(--cream), var(--cream-dim)); }
+
+  .scenario-timing {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .scenario-card.rush .scenario-timing { color: var(--brick); }
+  .scenario-card.prep .scenario-timing { color: var(--copper); }
+  .scenario-card.auto .scenario-timing { color: var(--amber); }
+  .scenario-card.closing .scenario-timing { color: var(--olive); }
+  .scenario-card.weekly .scenario-timing { color: var(--sage); }
+  .scenario-card.forecast .scenario-timing { color: var(--cream); }
+
+  .scenario-card h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-card p {
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .scenario-who {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 5px;
+  }
+
+  .scenario-who.ai {
+    color: var(--amber);
+    background: rgba(212,160,64,0.08);
+    border: 1px solid var(--amber-dim);
+  }
+
+  .scenario-who.you {
+    color: var(--copper);
+    background: rgba(200,112,64,0.08);
+    border: 1px solid var(--copper-dim);
+  }
+
+  .scenario-who.both {
+    color: var(--sage);
+    background: rgba(96,144,96,0.08);
+    border: 1px solid var(--sage-dim);
+  }
+
+  /* ── Capability Map ── */
+  .cap-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .cap-group {
+    background: var(--bg-card);
+    padding: 1.5rem;
+  }
+
+  .cap-group h4 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+
+  .cap-group.inventory h4 { color: var(--copper); }
+  .cap-group.staff h4 { color: var(--amber); }
+  .cap-group.menu h4 { color: var(--olive); }
+  .cap-group.health h4 { color: var(--brick); }
+  .cap-group.comms h4 { color: var(--sage); }
+  .cap-group.reports h4 { color: var(--cream); }
+
+  .cap-list {
+    list-style: none;
+  }
+
+  .cap-list li {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    transition: color 0.2s;
+    line-height: 1.5;
+  }
+
+  .cap-list li:hover { color: var(--text); }
+
+  .cap-list li::before {
+    content: '\2014';
+    margin-right: 0.5rem;
+    opacity: 0.3;
+  }
+
+  /* ── Appliance Section ── */
+  .appliance-box {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 2.5rem;
+    position: relative;
+  }
+
+  .appliance-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 500px 350px at 50% 50%, var(--copper-glow), transparent);
+    opacity: 0.5;
+  }
+
+  .appliance-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .appliance-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .appliance-icon {
+    width: 120px;
+    height: 80px;
+    border: 2px solid var(--copper-dim);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(200,112,64,0.04);
+    position: relative;
+  }
+
+  .appliance-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20%;
+    right: 20%;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .appliance-icon-inner {
+    font-size: 1.8rem;
+    color: var(--copper);
+    line-height: 1;
+  }
+
+  .appliance-pulse {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--copper);
+    animation: pulse 2s infinite;
+  }
+
+  .pulse-dot:nth-child(2) { animation-delay: 0.3s; background: var(--amber); }
+  .pulse-dot:nth-child(3) { animation-delay: 0.6s; background: var(--sage); }
+
+  .pulse-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .appliance-details h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    margin-bottom: 1rem;
+  }
+
+  .appliance-details p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .appliance-specs {
+    list-style: none;
+    margin-top: 1rem;
+  }
+
+  .appliance-specs li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .appliance-specs li span:last-child {
+    color: var(--copper);
+    font-weight: 500;
+  }
+
+  /* ── Sample Document ── */
+  .sample-doc {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+
+  .sample-doc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sample-doc pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  .sample-doc .field { color: var(--sage); }
+  .sample-doc .value { color: var(--amber); }
+  .sample-doc .heading { color: var(--text-bright); font-weight: 500; }
+  .sample-doc .note { color: var(--text-dim); }
+  .sample-doc .divider { color: var(--olive-dim); }
+
+  /* ── Pull Quote ── */
+  .pull-quote {
+    border-left: 2px solid var(--copper-dim);
+    padding: 1.5rem 2rem;
+    margin: 3rem 0;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-style: normal;
+    color: var(--text-dim);
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Comparison ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .compare-col {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .compare-col.before {
+    border-color: var(--brick-dim);
+  }
+
+  .compare-col.after {
+    border-color: var(--copper-dim);
+  }
+
+  .compare-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .compare-col.before .compare-label { color: var(--brick); }
+  .compare-col.after .compare-label { color: var(--copper); }
+
+  .compare-item {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.5;
+  }
+
+  .compare-item:last-child { border-bottom: none; }
+
+  .compare-col.before .compare-item::before {
+    content: '\00d7';
+    color: var(--brick-dim);
+    margin-right: 0.6rem;
+    font-weight: 600;
+  }
+
+  .compare-col.after .compare-item::before {
+    content: '\2192';
+    color: var(--copper);
+    margin-right: 0.6rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer p {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .footer a {
+    color: var(--copper);
+    text-decoration: none;
+  }
+
+  /* ── Scroll Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .section { padding: 3.5rem 1.25rem; }
+    .timeline-step { grid-template-columns: 80px 30px 1fr; }
+    .appliance-content { grid-template-columns: 1fr; gap: 2rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .diagram-content { padding: 2rem 1rem; }
+    .d-node { min-width: 85px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-label">Kitchen Pilot</div>
+    <h1>Your Restaurant, <em>One System</em></h1>
+    <p class="hero-sub">
+      Your recipes, your vendor contacts, your prep lists — written the way you already
+      keep them. An intelligent system reads it all, handles the ordering, the scheduling,
+      the food cost math, and the compliance paperwork. You stay on the floor and cook.
+    </p>
+    <div class="scroll-hint">Scroll to see how it works</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 01 · YOUR DOCUMENTS ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">01 — The Foundation</div>
+    <h2 class="section-title">Your Records Drive Everything</h2>
+    <p class="section-desc">
+      The system understands a handful of document types — the same stuff you already
+      track on clipboards, in notebooks, and on greasy Post-its. Give it structure and
+      the system knows what to do with it.
+    </p>
+  </div>
+
+  <div class="doc-grid reveal">
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(200,112,64,0.12); color: var(--copper); font-size: 1.2rem;">&#9733;</div>
+      <h3>Menu Item</h3>
+      <p>Recipe, cost breakdown, allergens, prep time, plating notes, vendor sources. Everything about a dish in one place.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">food cost</span>
+        <span class="doc-tag">allergens</span>
+        <span class="doc-tag">prep time</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(212,160,64,0.12); color: var(--amber); font-size: 1.2rem;">&#9736;</div>
+      <h3>Vendor Profile</h3>
+      <p>Contact info, delivery schedule, pricing, payment terms, product catalog. Who brings you what and when.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">delivery days</span>
+        <span class="doc-tag">payment terms</span>
+        <span class="doc-tag">product list</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(128,128,64,0.12); color: var(--olive); font-size: 1.2rem;">&#9200;</div>
+      <h3>Staff Schedule</h3>
+      <p>Shifts, availability, certifications like ServSafe and food handler cards, overtime tracking. Who's working when.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">shifts</span>
+        <span class="doc-tag">certifications</span>
+        <span class="doc-tag">overtime</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(160,80,64,0.12); color: var(--brick); font-size: 1.2rem;">&#9638;</div>
+      <h3>Inventory Count</h3>
+      <p>Par levels, current stock, order triggers, waste tracking, shelf life. What's in the walk-in and what needs to come in.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">par levels</span>
+        <span class="doc-tag">waste log</span>
+        <span class="doc-tag">shelf life</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(96,144,96,0.12); color: var(--sage); font-size: 1.2rem;">&#9745;</div>
+      <h3>Health & Safety</h3>
+      <p>Inspection prep, temperature logs, cleaning schedules, incident reports. Everything the health department wants to see.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">temp logs</span>
+        <span class="doc-tag">cleaning schedule</span>
+        <span class="doc-tag">HACCP</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(200,184,144,0.12); color: var(--cream); font-size: 1.2rem;">&#9998;</div>
+      <h3>Task Request</h3>
+      <p>Things that need doing — order produce for the weekend, find a line cook for Friday, update the specials board, call the hood vent guy.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">priority</span>
+        <span class="doc-tag">due date</span>
+        <span class="doc-tag">assigned to</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sample-doc reveal" style="margin-top:2rem;">
+    <div class="sample-doc-title">What a task request actually looks like</div>
+    <pre><span class="divider">---</span>
+<span class="field">priority</span>: <span class="value">high</span>
+<span class="field">due</span>: <span class="value">tomorrow 6am</span>
+<span class="field">assigned</span>: <span class="value">system</span>
+<span class="divider">---</span>
+
+<span class="heading"># Order Produce for Weekend Brunch</span>
+
+<span class="note">We're projecting 180 covers for Saturday brunch and 140 Sunday.</span>
+<span class="note">Check current stock on eggs, avocados, lemons, and mixed greens.</span>
+<span class="note">Compare prices between Valley Farms and Garcia Produce.</span>
+<span class="note">Place the order with whoever's cheaper. We need delivery by Friday 4pm.</span>
+<span class="note">Flag it if anything's backordered so I can adjust the menu.</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 02 · HOW YOU INTERACT ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">02 — Talking to the System</div>
+    <h2 class="section-title">Use It However You Work</h2>
+    <p class="section-desc">
+      You don't stop what you're doing to use software. You're elbow-deep in prep,
+      you're expediting, you're talking to a vendor on the phone. The system meets you
+      wherever you are.
+    </p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="timeline-step">
+      <div class="t-when">Walk-in</div>
+      <div class="t-line"><div class="t-dot copper"></div></div>
+      <div class="t-body">
+        <h4>Phone or Tablet</h4>
+        <p>Check inventory from the walk-in cooler. Approve a vendor order between lunch and dinner service.
+        Pull up a recipe while you're plating. Works offline — syncs when you're back in range.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">On the line</div>
+      <div class="t-line"><div class="t-dot brick"></div></div>
+      <div class="t-body">
+        <h4>Voice Commands</h4>
+        <p>"We're 86'd on the halibut. Text the fish guy for tomorrow delivery and pull it from tonight's specials."
+        Your hands are covered in flour. The system handles it.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">After close</div>
+      <div class="t-line"><div class="t-dot amber"></div></div>
+      <div class="t-body">
+        <h4>Computer</h4>
+        <p>End-of-night reconciliation. Review today's food cost. Plan next week's specials.
+        Adjust par levels based on what moved and what didn't. Everything in one place.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Vendor call</div>
+      <div class="t-line"><div class="t-dot olive"></div></div>
+      <div class="t-body">
+        <h4>Messaging</h4>
+        <p>A vendor texts you a deal on short ribs. Forward it to the system — it checks your menu,
+        calculates the margin, and tells you if it's worth it. Text back "order 40 lbs" and it's done.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Automatic</div>
+      <div class="t-line"><div class="t-dot sage"></div></div>
+      <div class="t-body">
+        <h4>Scheduled Tasks</h4>
+        <p>Daily prep lists generated at 5am. Auto-orders triggered when stock hits par levels.
+        Weekly food cost reports every Monday morning. Temp log reminders every two hours during service.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 03 · THE COMMAND CENTER ═════════════════════════════ -->
+<section class="flow-section">
+  <div class="flow-container">
+    <div class="section-header reveal">
+      <div class="section-num">03 — How It All Connects</div>
+      <h2 class="section-title">The Command Center</h2>
+      <p class="section-desc">
+        Everything flows through one system. You put in what you need. The coordinator
+        reads your records, understands your operation, and handles the rest.
+      </p>
+    </div>
+
+    <div class="system-diagram reveal">
+      <div class="diagram-bg"></div>
+      <div class="diagram-content">
+
+        <!-- You -->
+        <div class="diagram-row">
+          <div class="d-label">You — wherever you are in the restaurant</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node copper">Phone</div>
+          <div class="d-node copper">Voice</div>
+          <div class="d-node copper">Computer</div>
+          <div class="d-node copper">Text</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- Your Records -->
+        <div class="diagram-row">
+          <div class="d-label">Your records — recipes, vendors, schedules, inventory, logs</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node amber">Menu Items</div>
+          <div class="d-node amber">Vendors</div>
+          <div class="d-node amber big">Task Requests</div>
+          <div class="d-node amber">Staff</div>
+          <div class="d-node amber">Inventory</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- The Coordinator -->
+        <div class="diagram-row">
+          <div class="d-label">The coordinator — AI that understands restaurant operations</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node brick big">Kitchen Pilot AI</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- Actions -->
+        <div class="diagram-row">
+          <div class="d-label">Actions — what gets done</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node olive">Place Vendor Order</div>
+          <div class="d-node olive">Text a Cook</div>
+          <div class="d-node olive">Generate Prep Lists</div>
+          <div class="d-node olive">Update Specials</div>
+        </div>
+
+        <div class="d-arrows"><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span><span>&#8595;</span></div>
+
+        <!-- Documented Output -->
+        <div class="diagram-row">
+          <div class="d-label">Everything documented — searchable, audit-ready, yours</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node sage">Purchase Orders</div>
+          <div class="d-node sage">Prep Sheets</div>
+          <div class="d-node sage">Cost Reports</div>
+          <div class="d-node sage">Health Records</div>
+          <div class="d-node sage">Staff Comms</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "You're breaking down a case of short loin and you realize you're low on shallots.
+      Say it out loud. By the time you're done butchering, the order's placed with your
+      produce guy for tomorrow's delivery."
+      <cite>— That's what the system does</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 04 · A DAY IN THE LIFE ═════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">04 — A Day in the Life</div>
+    <h2 class="section-title">Real Situations, Handled</h2>
+    <p class="section-desc">
+      These aren't hypotheticals. Every independent restaurant deals with exactly
+      these situations every single week. Here's how the system handles each one.
+    </p>
+  </div>
+
+  <div class="scenario-grid reveal">
+    <div class="scenario-card rush">
+      <div class="scenario-timing">&#9888; Mid-service — the rush is on</div>
+      <h4>86'd and Covered</h4>
+      <p>You run out of salmon mid-service. System texts your fish vendor for next-day delivery,
+      suggests an alternative for tonight's specials board, and sends a heads-up to front of house
+      so they stop selling it before another ticket comes in.</p>
+      <div class="scenario-who both">AI + Front of House</div>
+    </div>
+
+    <div class="scenario-card prep">
+      <div class="scenario-timing">&#9742; 4:00 PM — Dinner prep, phone rings</div>
+      <h4>Call-Out Scramble</h4>
+      <p>Your line cook calls out at 4pm for tonight's dinner shift. System checks your roster for
+      who's off today, texts the three most likely to pick up a shift, and starts building a
+      simplified prep plan in case nobody can cover.</p>
+      <div class="scenario-who both">AI + Your Staff</div>
+    </div>
+
+    <div class="scenario-card auto">
+      <div class="scenario-timing">&#8635; Tuesday morning — invoice day</div>
+      <h4>Vendor Price Hike</h4>
+      <p>Your produce vendor raises prices on three items. System flags it immediately,
+      pulls pricing from your other vendors for the same products, and calculates the impact
+      on your menu food cost. You see it all before the next order goes out.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+
+    <div class="scenario-card weekly">
+      <div class="scenario-timing">&#8635; Every Monday — compliance check</div>
+      <h4>Health Inspection Prep</h4>
+      <p>Weekly automated sweep: are temperature logs current? Cleaning schedules signed off?
+      ServSafe certs up to date? Walk-in organized per FIFO? Generates a single report of
+      what needs attention before anyone from the health department shows up.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+
+    <div class="scenario-card closing">
+      <div class="scenario-timing">&#9790; 11:30 PM — Closing time</div>
+      <h4>End of Night</h4>
+      <p>Closing manager does the inventory count. System calculates today's actual food cost
+      against projected, flags anything approaching spoilage or expiration, and auto-generates
+      tomorrow's prep list based on reservations and projected walk-ins.</p>
+      <div class="scenario-who both">AI + Closing Manager</div>
+    </div>
+
+    <div class="scenario-card forecast">
+      <div class="scenario-timing">&#9729; Thursday — planning ahead</div>
+      <h4>Weekend Projections</h4>
+      <p>Based on current reservations, weather forecast, and your historical cover counts:
+      projected covers for Friday through Sunday, suggested prep quantities for each station,
+      and recommended staffing levels. You adjust what you want and approve the rest.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 05 · CAPABILITIES ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">05 — What It Handles</div>
+    <h2 class="section-title">Built for Restaurants</h2>
+    <p class="section-desc">
+      Not a generic business tool with a restaurant skin on it. Built from the ground up
+      for the way an independent restaurant actually operates.
+    </p>
+  </div>
+
+  <div class="cap-map reveal">
+    <div class="cap-group inventory">
+      <h4>Inventory & Ordering</h4>
+      <ul class="cap-list">
+        <li>Par level monitoring</li>
+        <li>Auto-order triggers</li>
+        <li>Multi-vendor price comparison</li>
+        <li>Waste tracking and reporting</li>
+        <li>Shelf life and FIFO alerts</li>
+      </ul>
+    </div>
+
+    <div class="cap-group staff">
+      <h4>Staff & Scheduling</h4>
+      <ul class="cap-list">
+        <li>Shift management and swaps</li>
+        <li>Call-out coverage finder</li>
+        <li>Certification tracking (ServSafe)</li>
+        <li>Overtime monitoring</li>
+        <li>Availability management</li>
+      </ul>
+    </div>
+
+    <div class="cap-group menu">
+      <h4>Menu & Cost</h4>
+      <ul class="cap-list">
+        <li>Recipe costing per plate</li>
+        <li>Menu price analysis</li>
+        <li>Specials management</li>
+        <li>Allergen tracking</li>
+        <li>Seasonal menu planning</li>
+      </ul>
+    </div>
+
+    <div class="cap-group health">
+      <h4>Health & Safety</h4>
+      <ul class="cap-list">
+        <li>Temperature log reminders</li>
+        <li>Cleaning schedule sign-offs</li>
+        <li>Inspection readiness reports</li>
+        <li>HACCP compliance tracking</li>
+        <li>Incident documentation</li>
+      </ul>
+    </div>
+
+    <div class="cap-group comms">
+      <h4>Communication</h4>
+      <ul class="cap-list">
+        <li>Vendor order confirmations</li>
+        <li>Staff shift notifications</li>
+        <li>86 alerts to front of house</li>
+        <li>Reservation confirmations</li>
+        <li>Delivery ETA tracking</li>
+      </ul>
+    </div>
+
+    <div class="cap-group reports">
+      <h4>Reporting</h4>
+      <ul class="cap-list">
+        <li>Daily food cost analysis</li>
+        <li>Labor cost tracking</li>
+        <li>Sales by menu item</li>
+        <li>Waste and spoilage reports</li>
+        <li>Weekly P&L summary</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 06 · BEFORE & AFTER ════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">06 — The Difference</div>
+    <h2 class="section-title">Before and After</h2>
+    <p class="section-desc">
+      You know the friction. You live with it every service.
+      Here's what changes.
+    </p>
+  </div>
+
+  <div class="compare-grid reveal">
+    <div class="compare-col before">
+      <div class="compare-label">How it works now</div>
+      <div class="compare-item">Running to the walk-in mid-service to check if you have enough salmon</div>
+      <div class="compare-item">Calling through your contacts one by one when a cook calls out</div>
+      <div class="compare-item">Hand-calculating food cost on a greasy napkin at the end of the night</div>
+      <div class="compare-item">Scrambling the night before a health inspection to get the logs in order</div>
+      <div class="compare-item">Guessing how much to prep for the weekend based on gut feeling</div>
+      <div class="compare-item">Finding out a vendor raised prices when the invoice is already paid</div>
+      <div class="compare-item">Forgetting to order until the delivery window closes</div>
+    </div>
+
+    <div class="compare-col after">
+      <div class="compare-label">How it works with Kitchen Pilot</div>
+      <div class="compare-item">Voice check inventory from anywhere in the kitchen — walk-in, line, office</div>
+      <div class="compare-item">System auto-texts available staff and tracks who responds</div>
+      <div class="compare-item">Real-time food cost updated with every order placed and count taken</div>
+      <div class="compare-item">Continuous compliance tracking with a weekly readiness report</div>
+      <div class="compare-item">Data-driven projections from reservations, weather, and history</div>
+      <div class="compare-item">Price changes flagged the moment they hit, with alternatives ready</div>
+      <div class="compare-item">Auto-orders triggered at par levels, confirmed before cutoff</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 07 · THE APPLIANCE ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">07 — The Appliance</div>
+    <h2 class="section-title">A Box in Your Kitchen Office</h2>
+    <p class="section-desc">
+      This isn't another SaaS subscription eating into your already thin margins.
+      It's a small, tough machine that sits next to your POS and runs everything.
+      Your data. Your operation. Nobody else's.
+    </p>
+  </div>
+
+  <div class="appliance-box reveal">
+    <div class="appliance-bg"></div>
+    <div class="appliance-content">
+      <div class="appliance-visual">
+        <div class="appliance-icon">
+          <div class="appliance-icon-inner">&#9618;</div>
+        </div>
+        <div class="appliance-pulse">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <span class="pulse-label">Always running</span>
+        </div>
+      </div>
+      <div class="appliance-details">
+        <h3>Your Kitchen Command Center</h3>
+        <p>
+          Built for the chaos of a restaurant — not fragile tech that breaks when someone
+          slams the office door. A compact machine that runs the AI, stores your records,
+          places the orders, generates the reports.
+        </p>
+        <p>
+          No cloud dependency. Works when your WiFi goes down during Saturday night rush.
+          No monthly SaaS fees. No per-seat pricing. No vendor deciding to triple their rates.
+          Plug it in next to the POS, start talking to it.
+        </p>
+        <ul class="appliance-specs">
+          <li><span>Your recipes stay</span> <span>In your kitchen</span></li>
+          <li><span>Monthly software fees</span> <span>None</span></li>
+          <li><span>Setup</span> <span>Plug in and go</span></li>
+          <li><span>WiFi goes down</span> <span>Core functions keep running</span></li>
+          <li><span>Internet required</span> <span>For texts and vendor orders only</span></li>
+          <li><span>Vendor lock-in</span> <span>Zero</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 08 · THE VISION ════════════════════════════════════ -->
+<section class="section" style="padding-bottom: 2rem;">
+  <div class="section-header reveal">
+    <div class="section-num">08 — The Vision</div>
+    <h2 class="section-title">Cook It. Speak It. It's Handled.</h2>
+    <p class="section-desc">
+      The distance between "I need this done" and "it's done" should be as short
+      as saying it out loud. That's what this system closes.
+    </p>
+  </div>
+
+  <div class="pull-quote reveal">
+    A new seasonal idea becomes a costed recipe. A costed recipe becomes a vendor order.
+    A vendor order becomes a prep sheet. A prep sheet becomes a trained station. A trained station
+    becomes a specials board. A specials board becomes a tracked performance number.
+    All through the notes and voice commands you already use.
+    <cite>— From idea to plate to P&L, one system</cite>
+  </div>
+
+  <div class="pull-quote reveal" style="border-left-color: var(--amber-dim);">
+    The real value isn't the technology. It's the hours you get back every week.
+    The orders that place themselves. The food cost you actually know in real time.
+    The health inspection you're always ready for. The prep list that's waiting when
+    your cooks walk in. The vendor deals you catch instead of miss.
+    <cite>— What it means for your restaurant</cite>
+  </div>
+
+  <div class="sample-doc reveal">
+    <div class="sample-doc-title">How the whole cycle works — new seasonal menu item</div>
+    <pre>
+<span class="heading">You say:</span>     <span class="value">"I want to run a braised lamb shank for fall. Serve it</span>
+<span class="value">              over polenta with gremolata. Let's see if the numbers work."</span>
+
+<span class="heading">The system:</span>  <span class="note">Creates a menu item record for Braised Lamb Shank</span>
+              <span class="note">Pulls current lamb pricing from your vendors</span>
+              <span class="note">Costs the full plate: protein, polenta, gremolata, garnish</span>
+              <span class="note">Calculates target menu price at your food cost percentage</span>
+              <span class="note">Sends you a summary: "Lamb shank — $6.40 plate cost, $24 menu price = 26.7%"</span>
+
+<span class="heading">You approve:</span> <span class="value">"Run it. Order lamb for Friday. 30 portions."</span>
+
+<span class="heading">The system:</span>  <span class="note">Places the order with your meat vendor for Friday AM delivery</span>
+              <span class="note">Generates a prep sheet: braising instructions, polenta batch size, gremolata mise</span>
+              <span class="note">Adds it to the specials board template for front of house</span>
+              <span class="note">Tracks nightly sales and actual vs. projected food cost</span>
+              <span class="note">Reports back Sunday: "Lamb shank — 24 sold, 6 wasted, actual cost 28.1%"</span></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═════════════════════════════════════════ -->
+<div class="footer">
+  <p>Soederpop Systems — <a href="https://www.soederpop.com">soederpop.com</a></p>
+  <p style="margin-top:0.5rem; font-size:0.6rem; opacity:0.5;">Version: Kitchen Pilot</p>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

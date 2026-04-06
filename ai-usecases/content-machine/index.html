@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Machine — Your Brand, One System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a080e;
+    --bg-card: #12101a;
+    --bg-card-hover: #1a1726;
+    --border: #1e1a2e;
+    --border-bright: #2e2840;
+    --text: #b8b0cc;
+    --text-dim: #6a5e80;
+    --text-bright: #e8e2f0;
+    --magenta: #d050a0;
+    --magenta-dim: #803060;
+    --magenta-glow: rgba(208, 80, 160, 0.12);
+    --electric: #5080ff;
+    --electric-dim: #304880;
+    --electric-glow: rgba(80, 128, 255, 0.12);
+    --mint: #40d0a0;
+    --mint-dim: #206848;
+    --mint-glow: rgba(64, 208, 160, 0.10);
+    --coral: #e06050;
+    --coral-dim: #803830;
+    --coral-glow: rgba(224, 96, 80, 0.12);
+    --gold: #d0a840;
+    --gold-dim: #806830;
+    --gold-glow: rgba(208, 168, 64, 0.10);
+    --violet: #8050d0;
+    --violet-dim: #483080;
+    --violet-glow: rgba(128, 80, 208, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 120%;
+    height: 140%;
+    background:
+      radial-gradient(ellipse 700px 500px at 30% 40%, var(--magenta-glow), transparent),
+      radial-gradient(ellipse 600px 400px at 70% 60%, var(--electric-glow), transparent),
+      radial-gradient(ellipse 400px 300px at 50% 80%, var(--violet-glow), transparent);
+    opacity: 0.7;
+    animation: heroShift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroShift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(20px, -10px) scale(1.05); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    color: var(--magenta);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 560px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    animation: fadeInUp 1.5s ease 1s both, gentleBob 3s ease-in-out infinite 2.5s;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes gentleBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── Sections ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* ── Document Type Grid ── */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .doc-card {
+    background: var(--bg-card);
+    padding: 1.75rem;
+    transition: background 0.3s ease;
+    cursor: default;
+  }
+
+  .doc-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .doc-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+  }
+
+  .doc-tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Entry Points / Timeline ── */
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 2rem;
+  }
+
+  .timeline-step {
+    display: grid;
+    grid-template-columns: 90px 40px 1fr;
+    align-items: start;
+    gap: 0;
+    min-height: 110px;
+  }
+
+  .t-when {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    text-align: right;
+    padding-top: 0.3rem;
+    padding-right: 1rem;
+  }
+
+  .t-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .t-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-bright);
+  }
+
+  .t-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .t-dot.magenta { background: var(--magenta); box-shadow: 0 0 12px var(--magenta-glow); }
+  .t-dot.electric { background: var(--electric); box-shadow: 0 0 12px var(--electric-glow); }
+  .t-dot.coral { background: var(--coral); box-shadow: 0 0 12px var(--coral-glow); }
+  .t-dot.mint { background: var(--mint); box-shadow: 0 0 12px var(--mint-glow); }
+  .t-dot.gold { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+  .t-dot.violet { background: var(--violet); box-shadow: 0 0 12px var(--violet-glow); }
+
+  .t-body {
+    padding: 0 0 2rem 1.25rem;
+  }
+
+  .t-body h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+  }
+
+  .t-body p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── System Diagram ── */
+  .flow-section {
+    padding: 5rem 2rem 4rem;
+  }
+
+  .flow-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .system-diagram {
+    margin-top: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 25% 30%, var(--magenta-glow), transparent),
+      radial-gradient(ellipse 500px 300px at 75% 70%, var(--electric-glow), transparent),
+      radial-gradient(ellipse 400px 400px at 50% 50%, var(--violet-glow), transparent);
+    opacity: 0.4;
+  }
+
+  .diagram-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .d-label {
+    width: 100%;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .d-node {
+    padding: 0.65rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    min-width: 105px;
+    transition: all 0.3s;
+  }
+
+  .d-node:hover { transform: scale(1.05); }
+
+  .d-node.magenta { border-color: var(--magenta-dim); color: var(--magenta); background: rgba(208,80,160,0.06); }
+  .d-node.electric { border-color: var(--electric-dim); color: var(--electric); background: rgba(80,128,255,0.06); }
+  .d-node.mint { border-color: var(--mint-dim); color: var(--mint); background: rgba(64,208,160,0.06); }
+  .d-node.coral { border-color: var(--coral-dim); color: var(--coral); background: rgba(224,96,80,0.06); }
+  .d-node.gold { border-color: var(--gold-dim); color: var(--gold); background: rgba(208,168,64,0.06); }
+  .d-node.violet { border-color: var(--violet-dim); color: var(--violet); background: rgba(128,80,208,0.06); }
+
+  .d-node.big {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    min-width: 150px;
+  }
+
+  .d-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0.5rem 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    opacity: 0.4;
+  }
+
+  .d-arrows span {
+    display: inline-block;
+    animation: arrowPulse 2.5s ease-in-out infinite;
+  }
+
+  .d-arrows span:nth-child(2) { animation-delay: 0.2s; }
+  .d-arrows span:nth-child(3) { animation-delay: 0.4s; }
+  .d-arrows span:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ── Scenario Cards ── */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .scenario-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .scenario-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .scenario-card.idea::before { background: linear-gradient(90deg, var(--magenta), var(--magenta-dim)); }
+  .scenario-card.repurpose::before { background: linear-gradient(90deg, var(--electric), var(--electric-dim)); }
+  .scenario-card.alert::before { background: linear-gradient(90deg, var(--coral), var(--coral-dim)); }
+  .scenario-card.analytics::before { background: linear-gradient(90deg, var(--violet), var(--violet-dim)); }
+  .scenario-card.batch::before { background: linear-gradient(90deg, var(--mint), var(--mint-dim)); }
+  .scenario-card.sponsor::before { background: linear-gradient(90deg, var(--gold), var(--gold-dim)); }
+
+  .scenario-timing {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .scenario-card.idea .scenario-timing { color: var(--magenta); }
+  .scenario-card.repurpose .scenario-timing { color: var(--electric); }
+  .scenario-card.alert .scenario-timing { color: var(--coral); }
+  .scenario-card.analytics .scenario-timing { color: var(--violet); }
+  .scenario-card.batch .scenario-timing { color: var(--mint); }
+  .scenario-card.sponsor .scenario-timing { color: var(--gold); }
+
+  .scenario-card h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-card p {
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .scenario-who {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 5px;
+  }
+
+  .scenario-who.ai {
+    color: var(--violet);
+    background: rgba(128,80,208,0.08);
+    border: 1px solid var(--violet-dim);
+  }
+
+  .scenario-who.you {
+    color: var(--magenta);
+    background: rgba(208,80,160,0.08);
+    border: 1px solid var(--magenta-dim);
+  }
+
+  .scenario-who.both {
+    color: var(--electric);
+    background: rgba(80,128,255,0.08);
+    border: 1px solid var(--electric-dim);
+  }
+
+  /* ── Capability Map ── */
+  .cap-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .cap-group {
+    background: var(--bg-card);
+    padding: 1.5rem;
+  }
+
+  .cap-group h4 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+
+  .cap-group.planning h4 { color: var(--magenta); }
+  .cap-group.multiplatform h4 { color: var(--electric); }
+  .cap-group.scheduling h4 { color: var(--mint); }
+  .cap-group.analytics h4 { color: var(--violet); }
+  .cap-group.brand h4 { color: var(--gold); }
+  .cap-group.production h4 { color: var(--coral); }
+
+  .cap-list {
+    list-style: none;
+  }
+
+  .cap-list li {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    transition: color 0.2s;
+    line-height: 1.5;
+  }
+
+  .cap-list li:hover { color: var(--text); }
+
+  .cap-list li::before {
+    content: '\2014';
+    margin-right: 0.5rem;
+    opacity: 0.3;
+  }
+
+  /* ── Appliance Section ── */
+  .appliance-box {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 2.5rem;
+    position: relative;
+  }
+
+  .appliance-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 500px 350px at 50% 50%, var(--magenta-glow), transparent);
+    opacity: 0.5;
+  }
+
+  .appliance-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .appliance-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .appliance-icon {
+    width: 120px;
+    height: 80px;
+    border: 2px solid var(--magenta-dim);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(208,80,160,0.04);
+    position: relative;
+  }
+
+  .appliance-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20%;
+    right: 20%;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .appliance-icon-inner {
+    font-size: 1.8rem;
+    color: var(--magenta);
+    line-height: 1;
+  }
+
+  .appliance-pulse {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--magenta);
+    animation: pulse 2s infinite;
+  }
+
+  .pulse-dot:nth-child(2) { animation-delay: 0.3s; background: var(--electric); }
+  .pulse-dot:nth-child(3) { animation-delay: 0.6s; background: var(--mint); }
+
+  .pulse-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .appliance-details h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    margin-bottom: 1rem;
+  }
+
+  .appliance-details p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .appliance-specs {
+    list-style: none;
+    margin-top: 1rem;
+  }
+
+  .appliance-specs li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .appliance-specs li span:last-child {
+    color: var(--magenta);
+    font-weight: 500;
+  }
+
+  /* ── Sample Document ── */
+  .sample-doc {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+
+  .sample-doc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sample-doc pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  .sample-doc .field { color: var(--electric); }
+  .sample-doc .value { color: var(--magenta); }
+  .sample-doc .heading { color: var(--text-bright); font-weight: 500; }
+  .sample-doc .note { color: var(--text-dim); }
+  .sample-doc .divider { color: var(--violet-dim); }
+
+  /* ── Pull Quote ── */
+  .pull-quote {
+    border-left: 2px solid var(--magenta-dim);
+    padding: 1.5rem 2rem;
+    margin: 3rem 0;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-style: normal;
+    color: var(--text-dim);
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Comparison ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .compare-col {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .compare-col.before {
+    border-color: var(--coral-dim);
+  }
+
+  .compare-col.after {
+    border-color: var(--magenta-dim);
+  }
+
+  .compare-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .compare-col.before .compare-label { color: var(--coral); }
+  .compare-col.after .compare-label { color: var(--magenta); }
+
+  .compare-item {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.5;
+  }
+
+  .compare-item:last-child { border-bottom: none; }
+
+  .compare-col.before .compare-item::before {
+    content: '\00d7';
+    color: var(--coral-dim);
+    margin-right: 0.6rem;
+    font-weight: 600;
+  }
+
+  .compare-col.after .compare-item::before {
+    content: '\2192';
+    color: var(--magenta);
+    margin-right: 0.6rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer p {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .footer a {
+    color: var(--magenta);
+    text-decoration: none;
+  }
+
+  /* ── Scroll Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .section { padding: 3.5rem 1.25rem; }
+    .timeline-step { grid-template-columns: 70px 30px 1fr; }
+    .appliance-content { grid-template-columns: 1fr; gap: 2rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .diagram-content { padding: 2rem 1rem; }
+    .d-node { min-width: 85px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-label">Soederpop Systems</div>
+    <h1>Your Brand, <em>One System</em></h1>
+    <p class="hero-sub">
+      You have one idea. The system turns it into content for every platform — scripted, scheduled,
+      captioned, thumbnailed, and posted. You create. It handles the rest.
+    </p>
+    <div class="scroll-hint">Scroll to see how it works</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 01 · YOUR CONTENT LIBRARY ══════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">01 — The Foundation</div>
+    <h2 class="section-title">Your Content Library Drives Everything</h2>
+    <p class="section-desc">
+      The system understands a handful of document types. Each one maps to a real part of your
+      content workflow — from the spark of an idea to the analytics after it's posted.
+      You fill in what you know, and the system knows what to do with it.
+    </p>
+  </div>
+
+  <div class="doc-grid reveal">
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(208,80,160,0.12); color: var(--magenta); font-size: 1.2rem;">&#9733;</div>
+      <h3>Content Idea</h3>
+      <p>The spark. Topic, angle, target audience, keywords, which platforms it's best suited for. Raw ideas that become real content.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">topic</span>
+        <span class="doc-tag">audience</span>
+        <span class="doc-tag">platform fit</span>
+        <span class="doc-tag">keywords</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(80,128,255,0.12); color: var(--electric); font-size: 1.2rem;">&#9998;</div>
+      <h3>Script / Outline</h3>
+      <p>Full script or outline with hooks, CTAs, talking points, and B-roll notes. Everything you need to sit down and record.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">hook</span>
+        <span class="doc-tag">CTA</span>
+        <span class="doc-tag">talking points</span>
+        <span class="doc-tag">B-roll</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(64,208,160,0.12); color: var(--mint); font-size: 1.2rem;">&#9776;</div>
+      <h3>Content Calendar</h3>
+      <p>Scheduled posts with platform-specific timing, campaign groupings, and a clear view of what's going out when.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">schedule</span>
+        <span class="doc-tag">platform timing</span>
+        <span class="doc-tag">campaigns</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(128,80,208,0.12); color: var(--violet); font-size: 1.2rem;">&#9851;</div>
+      <h3>Asset Library</h3>
+      <p>Thumbnails, templates, music tracks, brand assets, B-roll clips. Everything organized and ready to pull into any post.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">thumbnails</span>
+        <span class="doc-tag">templates</span>
+        <span class="doc-tag">brand assets</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(208,168,64,0.12); color: var(--gold); font-size: 1.2rem;">&#9650;</div>
+      <h3>Analytics Snapshot</h3>
+      <p>Views, engagement rates, audience growth, revenue, top performers. The numbers that tell you what's working and what's not.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">views</span>
+        <span class="doc-tag">engagement</span>
+        <span class="doc-tag">growth</span>
+        <span class="doc-tag">revenue</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(224,96,80,0.12); color: var(--coral); font-size: 1.2rem;">&#9881;</div>
+      <h3>Task Request</h3>
+      <p>Things that need doing — edit this video for Reels, write captions for the batch, schedule next week, update the media kit.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">priority</span>
+        <span class="doc-tag">due date</span>
+        <span class="doc-tag">platform</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sample-doc reveal" style="margin-top:2rem;">
+    <div class="sample-doc-title">What a task request actually looks like</div>
+    <pre><span class="divider">---</span>
+<span class="field">priority</span>: <span class="value">high</span>
+<span class="field">due</span>: <span class="value">today</span>
+<span class="field">platforms</span>: <span class="value">tiktok, instagram, twitter</span>
+<span class="divider">---</span>
+
+<span class="heading"># Repurpose YouTube Video for All Platforms</span>
+
+<span class="note">Just uploaded "5 Habits That Changed My Productivity" to YouTube.</span>
+<span class="note">Pull 3 best clips for TikTok (under 60 seconds each, start with hooks).</span>
+<span class="note">Make one Instagram Reel from the strongest moment — add captions.</span>
+<span class="note">Write a Twitter thread summarizing the 5 habits with a link to the full video.</span>
+<span class="note">Use the engagement data from last week to pick the best posting times.</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 02 · HOW YOU INTERACT ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">02 — Talking to the System</div>
+    <h2 class="section-title">Use It However You Create</h2>
+    <p class="section-desc">
+      You don't have to change how you work. Capture ideas on the go, approve edits from bed,
+      batch-plan at your desk. The system picks it up from wherever you are.
+    </p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="timeline-step">
+      <div class="t-when">On the go</div>
+      <div class="t-line"><div class="t-dot magenta"></div></div>
+      <div class="t-body">
+        <h4>Phone or Tablet</h4>
+        <p>Capture ideas while you're out. Approve edits from bed. Check what's scheduled for tomorrow.
+        Swipe through generated thumbnails and pick the one that hits. Works offline — syncs when you're back.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Hands-free</div>
+      <div class="t-line"><div class="t-dot coral"></div></div>
+      <div class="t-body">
+        <h4>Voice Commands</h4>
+        <p>"Save idea: why most productivity advice is wrong, angle it for people who already work hard."
+        Spoken while you're setting up your ring light. Filed, tagged, and ready for scripting by the time you sit down.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Deep work</div>
+      <div class="t-line"><div class="t-dot electric"></div></div>
+      <div class="t-body">
+        <h4>Your Computer</h4>
+        <p>The full dashboard. Batch-plan a week of content. Review scripts, tweak captions, rearrange
+        your calendar. Drag clips into the timeline. This is where deep editing sessions happen.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">2 AM thought</div>
+      <div class="t-line"><div class="t-dot violet"></div></div>
+      <div class="t-body">
+        <h4>Messaging</h4>
+        <p>Text yourself an idea at 2am. "Video idea: the real reason people quit in January, not December."
+        The system reads it, creates a content idea doc, and it's waiting for you in the morning.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Automatic</div>
+      <div class="t-line"><div class="t-dot mint"></div></div>
+      <div class="t-body">
+        <h4>Scheduled Tasks</h4>
+        <p>Things that happen without you — auto-post at optimal times, weekly analytics digest every Monday,
+        trend scanning in your niche, caption generation for queued videos. The system works while you sleep.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 03 · THE COMMAND CENTER ═════════════════════════════ -->
+<section class="flow-section">
+  <div class="flow-container">
+    <div class="section-header reveal">
+      <div class="section-num">03 — How It All Connects</div>
+      <h2 class="section-title">The Command Center</h2>
+      <p class="section-desc">
+        Everything flows through one system. You put in ideas and content.
+        The coordinator figures out what to do with it across every platform.
+      </p>
+    </div>
+
+    <div class="system-diagram reveal">
+      <div class="diagram-bg"></div>
+      <div class="diagram-content">
+
+        <!-- You -->
+        <div class="diagram-row">
+          <div class="d-label">You — wherever you are</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node magenta">Phone</div>
+          <div class="d-node magenta">Voice</div>
+          <div class="d-node magenta">Computer</div>
+          <div class="d-node magenta">Text</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- Your Library -->
+        <div class="diagram-row">
+          <div class="d-label">Your Library — organized content the system understands</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node electric">Ideas</div>
+          <div class="d-node electric">Scripts</div>
+          <div class="d-node electric big">Calendar</div>
+          <div class="d-node electric">Assets</div>
+          <div class="d-node electric">Analytics</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- The Coordinator -->
+        <div class="diagram-row">
+          <div class="d-label">The Coordinator — AI that understands your content strategy</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node coral big">AI Assistant</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- Actions -->
+        <div class="diagram-row">
+          <div class="d-label">Actions — what gets done automatically</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node violet">Repurpose to Reels</div>
+          <div class="d-node violet">Write Captions</div>
+          <div class="d-node violet">Schedule Posts</div>
+          <div class="d-node violet">Generate Thumbnails</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- Published Output -->
+        <div class="diagram-row">
+          <div class="d-label">Published — your content, everywhere</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node mint">TikTok</div>
+          <div class="d-node mint">YouTube</div>
+          <div class="d-node mint">Instagram</div>
+          <div class="d-node mint">Twitter</div>
+          <div class="d-node mint">Analytics</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "Record one video on Sunday afternoon. Wake up Monday to find it posted on YouTube,
+      clipped for TikTok, captioned for Instagram, threaded on Twitter, and the analytics
+      are already tracking. That's the system."
+      <cite>— What it actually feels like</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 04 · A DAY IN THE LIFE ═════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">04 — A Day in the Life</div>
+    <h2 class="section-title">Real Situations, Handled</h2>
+    <p class="section-desc">
+      These aren't hypotheticals. Every solo creator deals with exactly these situations.
+      Here's how the system handles each one so you can focus on what you're actually good at — creating.
+    </p>
+  </div>
+
+  <div class="scenario-grid reveal">
+    <div class="scenario-card idea">
+      <div class="scenario-timing">&#9733; Anytime — ideas don't wait</div>
+      <h4>Shower Idea</h4>
+      <p>You voice-note an idea while getting ready. The system files it as a content idea, researches
+      the topic, drafts a script outline with three hook variations, and suggests the best posting time
+      based on your analytics. By the time you're dressed, there's a ready-to-review script waiting.</p>
+      <div class="scenario-who both">AI + You review</div>
+    </div>
+
+    <div class="scenario-card repurpose">
+      <div class="scenario-timing">&#9654; Post-upload — automatic</div>
+      <h4>One Video, Five Platforms</h4>
+      <p>You film one YouTube video. The system auto-generates: three TikTok clips from the strongest
+      moments, an Instagram Reel with burned-in captions, a Twitter thread summarizing the key points
+      with a link back, and a LinkedIn post version. All platform-optimized, all ready to review.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+
+    <div class="scenario-card alert">
+      <div class="scenario-timing">&#9889; Breaking — time-sensitive</div>
+      <h4>Trend Alert</h4>
+      <p>A trending topic hits your niche. The system alerts you with context, suggests three angles
+      that match your brand voice, drafts hook variations for each, and clears a slot in your content
+      calendar. You pick the angle, hit record, and you're riding the wave while others are still planning.</p>
+      <div class="scenario-who both">AI + You decide</div>
+    </div>
+
+    <div class="scenario-card analytics">
+      <div class="scenario-timing">&#8635; Every Monday morning</div>
+      <h4>Weekly Analytics</h4>
+      <p>Monday morning briefing drops into your inbox: what performed best, what flopped and why,
+      audience growth across platforms, revenue update, and specific suggestions for this week's content
+      focus based on what the algorithm is rewarding right now.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+
+    <div class="scenario-card batch">
+      <div class="scenario-timing">&#9998; Batch day — Sunday</div>
+      <h4>Batch Caption Writing</h4>
+      <p>You filmed 10 videos on Sunday. The system generates platform-specific captions for all of them —
+      short and punchy for TikTok, longer with hashtag sets for Instagram, conversational for Twitter.
+      Hashtags optimized per platform based on current performance data. You review and tweak, not write from scratch.</p>
+      <div class="scenario-who both">AI drafts + You polish</div>
+    </div>
+
+    <div class="scenario-card sponsor">
+      <div class="scenario-timing">&#9733; Ongoing — always current</div>
+      <h4>Sponsorship Tracker</h4>
+      <p>Tracks every brand deal in one place: deliverables, deadlines, payment status, usage rights.
+      Auto-generates an updated media kit with your latest stats whenever you need to pitch.
+      Reminds you before deadlines. Flags when payments are overdue.</p>
+      <div class="scenario-who ai">AI — automatic</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 05 · CAPABILITIES ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">05 — What It Handles</div>
+    <h2 class="section-title">Built for Creators</h2>
+    <p class="section-desc">
+      Under the hood, the system has dozens of capabilities. Here's what matters to you —
+      grouped by the parts of your content business they support.
+    </p>
+  </div>
+
+  <div class="cap-map reveal">
+    <div class="cap-group planning">
+      <h4>Content Planning</h4>
+      <ul class="cap-list">
+        <li>Idea capture from any device</li>
+        <li>Script and outline drafting</li>
+        <li>Calendar management</li>
+        <li>Topic and keyword research</li>
+        <li>Content series planning</li>
+      </ul>
+    </div>
+
+    <div class="cap-group multiplatform">
+      <h4>Multi-Platform</h4>
+      <ul class="cap-list">
+        <li>Auto-repurpose to every format</li>
+        <li>Platform-specific adaptation</li>
+        <li>Aspect ratio and length optimization</li>
+        <li>Cross-platform link management</li>
+        <li>Format-aware caption generation</li>
+      </ul>
+    </div>
+
+    <div class="cap-group scheduling">
+      <h4>Scheduling & Posting</h4>
+      <ul class="cap-list">
+        <li>Auto-schedule at optimal times</li>
+        <li>Queue management across platforms</li>
+        <li>Batch scheduling for content days</li>
+        <li>Time zone-aware posting</li>
+        <li>Draft review before publish</li>
+      </ul>
+    </div>
+
+    <div class="cap-group analytics">
+      <h4>Analytics & Growth</h4>
+      <ul class="cap-list">
+        <li>Cross-platform performance tracking</li>
+        <li>Audience insight reports</li>
+        <li>Trend detection in your niche</li>
+        <li>Revenue and monetization tracking</li>
+        <li>Content performance comparisons</li>
+      </ul>
+    </div>
+
+    <div class="cap-group brand">
+      <h4>Brand Management</h4>
+      <ul class="cap-list">
+        <li>Auto-updated media kit</li>
+        <li>Sponsorship and deal tracking</li>
+        <li>Brand asset organization</li>
+        <li>Style guide enforcement</li>
+        <li>Rate card with current metrics</li>
+      </ul>
+    </div>
+
+    <div class="cap-group production">
+      <h4>Production</h4>
+      <ul class="cap-list">
+        <li>Thumbnail generation</li>
+        <li>Caption writing and optimization</li>
+        <li>Hashtag research per platform</li>
+        <li>Hook variation drafting</li>
+        <li>B-roll suggestions from library</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 06 · BEFORE & AFTER ════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">06 — The Difference</div>
+    <h2 class="section-title">Before and After</h2>
+    <p class="section-desc">
+      You know the grind. You live it every week.
+      Here's what changes.
+    </p>
+  </div>
+
+  <div class="compare-grid reveal">
+    <div class="compare-col before">
+      <div class="compare-label">How it works now</div>
+      <div class="compare-item">Spending 3 hours repurposing one video for 4 platforms</div>
+      <div class="compare-item">Forgetting to post on your best-performing days</div>
+      <div class="compare-item">Manually tracking which sponsors paid and which didn't</div>
+      <div class="compare-item">Losing ideas you had at 3am because you didn't write them down</div>
+      <div class="compare-item">Writing captions from scratch for every single platform</div>
+      <div class="compare-item">Checking analytics across 4 different apps every morning</div>
+      <div class="compare-item">Missing trends because you saw them a day too late</div>
+    </div>
+
+    <div class="compare-col after">
+      <div class="compare-label">How it works with the system</div>
+      <div class="compare-item">One upload, every platform gets a tailored version in minutes</div>
+      <div class="compare-item">AI knows your best posting windows and queues automatically</div>
+      <div class="compare-item">Dashboard shows every deal, deadline, and payment status</div>
+      <div class="compare-item">Voice note or text captures ideas instantly, filed and ready</div>
+      <div class="compare-item">Platform-specific captions drafted automatically, you just polish</div>
+      <div class="compare-item">One weekly briefing with everything that matters, all platforms combined</div>
+      <div class="compare-item">Trend alerts hit your phone with suggested angles and draft hooks</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 07 · THE APPLIANCE ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">07 — The Appliance</div>
+    <h2 class="section-title">A Box on Your Desk</h2>
+    <p class="section-desc">
+      This isn't another monthly SaaS that'll triple its price or get acqui-hired next year.
+      It's a small, quiet machine that sits on your desk and runs everything.
+      Your content. Your data. Your brand. No middleman.
+    </p>
+  </div>
+
+  <div class="appliance-box reveal">
+    <div class="appliance-bg"></div>
+    <div class="appliance-content">
+      <div class="appliance-visual">
+        <div class="appliance-icon">
+          <div class="appliance-icon-inner">&#9618;</div>
+        </div>
+        <div class="appliance-pulse">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <span class="pulse-label">Always running</span>
+        </div>
+      </div>
+      <div class="appliance-details">
+        <h3>Your Content Engine</h3>
+        <p>
+          A compact machine — roughly the size of a thick paperback — that sits on your desk or behind
+          your monitor. It runs the AI, stores your content library, manages your schedules, generates
+          thumbnails, writes captions, and posts to every platform.
+        </p>
+        <p>
+          Your content archive stays local. No per-platform posting fees. No monthly subscription
+          that replaces itself every six months. Plug it in, connect your accounts, start creating.
+        </p>
+        <ul class="appliance-specs">
+          <li><span>Your content library stays</span> <span>On your desk</span></li>
+          <li><span>Monthly software fees</span> <span>None</span></li>
+          <li><span>Setup</span> <span>Plug in, connect accounts</span></li>
+          <li><span>AI processing</span> <span>On-device + cloud hybrid</span></li>
+          <li><span>Internet required</span> <span>For posting and analytics</span></li>
+          <li><span>Backup</span> <span>Automatic, encrypted</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 08 · THE VISION ════════════════════════════════════ -->
+<section class="section" style="padding-bottom: 2rem;">
+  <div class="section-header reveal">
+    <div class="section-num">08 — The Vision</div>
+    <h2 class="section-title">Record It. Speak It. It's Everywhere.</h2>
+    <p class="section-desc">
+      The distance between having an idea and having it posted on every platform
+      should be as short as possible. That's what this system closes.
+    </p>
+  </div>
+
+  <div class="pull-quote reveal">
+    A shower thought becomes a script. A script becomes a video. A video becomes five posts
+    across five platforms — each one optimized, captioned, scheduled, and tracked.
+    All through simple notes you write the way you already think — on your phone, at your desk,
+    or out loud while you set up your shot.
+    <cite>— One system, no juggling</cite>
+  </div>
+
+  <div class="pull-quote reveal" style="border-left-color: var(--electric-dim);">
+    The real value isn't the technology. It's the hours you get back every week.
+    The platforms you stopped neglecting. The consistency that builds an audience.
+    The sponsorships you never miss a deadline on. The ideas that never slip through the cracks
+    because the system was listening when you spoke them into existence at 2am.
+    <cite>— What it means for your brand</cite>
+  </div>
+
+  <div class="sample-doc reveal">
+    <div class="sample-doc-title">How the whole cycle works</div>
+    <pre>
+<span class="heading">You say:</span>     <span class="value">"Video idea. Five habits that changed my productivity.</span>
+<span class="value">              Angle it for people who already work hard but feel stuck.</span>
+<span class="value">              This is a good one for YouTube long-form and TikTok clips."</span>
+
+<span class="heading">The system:</span>  <span class="note">Creates a content idea with topic, angle, and platform tags</span>
+              <span class="note">Researches trending keywords around productivity habits</span>
+              <span class="note">Drafts a script outline with 3 hook variations</span>
+              <span class="note">Suggests optimal filming length based on your analytics</span>
+              <span class="note">Blocks a slot in your calendar for filming day</span>
+
+<span class="heading">You film:</span>    <span class="value">Record the video. Upload to the system. Done.</span>
+
+<span class="heading">The system:</span>  <span class="note">Posts the full video to YouTube with optimized title and description</span>
+              <span class="note">Pulls 3 strongest clips for TikTok with hooks</span>
+              <span class="note">Creates an Instagram Reel with burned-in captions</span>
+              <span class="note">Writes a Twitter thread summarizing the 5 habits</span>
+              <span class="note">Generates a thumbnail from the best frame + your brand template</span>
+              <span class="note">Schedules everything at your best-performing times per platform</span>
+              <span class="note">Tracks analytics across all platforms in one dashboard</span>
+              <span class="note">Monday: tells you how it performed and suggests follow-up content</span></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═════════════════════════════════════════ -->
+<div class="footer">
+  <p>Soederpop Systems — <a href="https://www.soederpop.com">soederpop.com</a></p>
+  <p style="margin-top:0.5rem; font-size:0.6rem; opacity:0.5;">Version: Content Machine</p>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

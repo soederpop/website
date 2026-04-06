@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iron Case — Your Firm, One System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0d0c10;
+    --bg-card: #13121a;
+    --bg-card-hover: #1a1826;
+    --border: #201e2c;
+    --border-bright: #2e2a3e;
+    --text: #b0aec0;
+    --text-dim: #605c72;
+    --text-bright: #e4e0f0;
+    --crimson: #b03030;
+    --crimson-dim: #6a1e1e;
+    --crimson-glow: rgba(176, 48, 48, 0.12);
+    --steel: #6080a0;
+    --steel-dim: #3a4e62;
+    --steel-glow: rgba(96, 128, 160, 0.10);
+    --brass: #c0982c;
+    --brass-dim: #7a6020;
+    --brass-glow: rgba(192, 152, 44, 0.12);
+    --slate: #607080;
+    --slate-dim: #3a444e;
+    --slate-glow: rgba(96, 112, 128, 0.10);
+    --sage: #508060;
+    --sage-dim: #305038;
+    --sage-glow: rgba(80, 128, 96, 0.10);
+    --plum: #806098;
+    --plum-dim: #4e3a5e;
+    --plum-glow: rgba(128, 96, 152, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 120%;
+    height: 140%;
+    background:
+      radial-gradient(ellipse 700px 500px at 30% 40%, var(--crimson-glow), transparent),
+      radial-gradient(ellipse 600px 400px at 70% 60%, var(--brass-glow), transparent);
+    opacity: 0.6;
+    animation: heroShift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes heroShift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(20px, -10px) scale(1.05); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+  }
+
+  .hero-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .hero h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    color: var(--crimson);
+    font-style: italic;
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 580px;
+    margin: 0 auto 2.5rem;
+  }
+
+  .scroll-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--text-dim);
+    animation: fadeInUp 1.5s ease 1s both, gentleBob 3s ease-in-out infinite 2.5s;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes gentleBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ── Sections ── */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--crimson);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 620px;
+    line-height: 1.7;
+  }
+
+  /* ── Document Type Grid ── */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .doc-card {
+    background: var(--bg-card);
+    padding: 1.75rem;
+    transition: background 0.3s ease;
+    cursor: default;
+  }
+
+  .doc-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .doc-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+  }
+
+  .doc-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.4rem;
+  }
+
+  .doc-card p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.85rem;
+  }
+
+  .doc-tag {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Entry Points / Timeline ── */
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 2rem;
+  }
+
+  .timeline-step {
+    display: grid;
+    grid-template-columns: 110px 40px 1fr;
+    align-items: start;
+    gap: 0;
+    min-height: 110px;
+  }
+
+  .t-when {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    text-align: right;
+    padding-top: 0.3rem;
+    padding-right: 1rem;
+  }
+
+  .t-line {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .t-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-bright);
+  }
+
+  .t-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .t-dot.crimson { background: var(--crimson); box-shadow: 0 0 12px var(--crimson-glow); }
+  .t-dot.steel { background: var(--steel); box-shadow: 0 0 12px var(--steel-glow); }
+  .t-dot.brass { background: var(--brass); box-shadow: 0 0 12px var(--brass-glow); }
+  .t-dot.sage { background: var(--sage); box-shadow: 0 0 12px var(--sage-glow); }
+  .t-dot.plum { background: var(--plum); box-shadow: 0 0 12px var(--plum-glow); }
+
+  .t-body {
+    padding: 0 0 2rem 1.25rem;
+  }
+
+  .t-body h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+  }
+
+  .t-body p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ── System Diagram ── */
+  .flow-section {
+    padding: 5rem 2rem 4rem;
+  }
+
+  .flow-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .system-diagram {
+    margin-top: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 600px 400px at 25% 30%, var(--crimson-glow), transparent),
+      radial-gradient(ellipse 500px 300px at 75% 70%, var(--brass-glow), transparent),
+      radial-gradient(ellipse 400px 400px at 50% 50%, var(--plum-glow), transparent);
+    opacity: 0.4;
+  }
+
+  .diagram-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2rem;
+  }
+
+  .diagram-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .diagram-row:last-child {
+    margin-bottom: 0;
+  }
+
+  .d-label {
+    width: 100%;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .d-node {
+    padding: 0.65rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    border: 1px solid;
+    text-align: center;
+    min-width: 105px;
+    transition: all 0.3s;
+  }
+
+  .d-node:hover { transform: scale(1.05); }
+
+  .d-node.crimson { border-color: var(--crimson-dim); color: var(--crimson); background: rgba(176,48,48,0.06); }
+  .d-node.steel { border-color: var(--steel-dim); color: var(--steel); background: rgba(96,128,160,0.06); }
+  .d-node.brass { border-color: var(--brass-dim); color: var(--brass); background: rgba(192,152,44,0.06); }
+  .d-node.slate { border-color: var(--slate-dim); color: var(--slate); background: rgba(96,112,128,0.06); }
+  .d-node.sage { border-color: var(--sage-dim); color: var(--sage); background: rgba(80,128,96,0.06); }
+  .d-node.plum { border-color: var(--plum-dim); color: var(--plum); background: rgba(128,96,152,0.06); }
+
+  .d-node.big {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    min-width: 150px;
+  }
+
+  .d-arrows {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 0.5rem 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    opacity: 0.4;
+  }
+
+  .d-arrows span {
+    display: inline-block;
+    animation: arrowPulse 2.5s ease-in-out infinite;
+  }
+
+  .d-arrows span:nth-child(2) { animation-delay: 0.2s; }
+  .d-arrows span:nth-child(3) { animation-delay: 0.4s; }
+  .d-arrows span:nth-child(4) { animation-delay: 0.6s; }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ── Scenario Cards ── */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .scenario-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  .scenario-card:hover {
+    border-color: var(--border-bright);
+  }
+
+  .scenario-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .scenario-card.intake::before { background: linear-gradient(90deg, var(--brass), var(--brass-dim)); }
+  .scenario-card.urgent::before { background: linear-gradient(90deg, var(--crimson), var(--crimson-dim)); }
+  .scenario-card.auto::before { background: linear-gradient(90deg, var(--steel), var(--steel-dim)); }
+  .scenario-card.daily::before { background: linear-gradient(90deg, var(--sage), var(--sage-dim)); }
+  .scenario-card.demand::before { background: linear-gradient(90deg, var(--plum), var(--plum-dim)); }
+  .scenario-card.prep::before { background: linear-gradient(90deg, var(--slate), var(--slate-dim)); }
+
+  .scenario-timing {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .scenario-card.intake .scenario-timing { color: var(--brass); }
+  .scenario-card.urgent .scenario-timing { color: var(--crimson); }
+  .scenario-card.auto .scenario-timing { color: var(--steel); }
+  .scenario-card.daily .scenario-timing { color: var(--sage); }
+  .scenario-card.demand .scenario-timing { color: var(--plum); }
+  .scenario-card.prep .scenario-timing { color: var(--slate); }
+
+  .scenario-card h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-card p {
+    font-size: 0.84rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .scenario-who {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    font-size: 0.68rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 5px;
+  }
+
+  .scenario-who.ai {
+    color: var(--steel);
+    background: rgba(96,128,160,0.08);
+    border: 1px solid var(--steel-dim);
+  }
+
+  .scenario-who.both {
+    color: var(--brass);
+    background: rgba(192,152,44,0.08);
+    border: 1px solid var(--brass-dim);
+  }
+
+  .scenario-who.you {
+    color: var(--crimson);
+    background: rgba(176,48,48,0.08);
+    border: 1px solid var(--crimson-dim);
+  }
+
+  /* ── Capability Map ── */
+  .cap-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 2rem;
+  }
+
+  .cap-group {
+    background: var(--bg-card);
+    padding: 1.5rem;
+  }
+
+  .cap-group h4 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.85rem;
+  }
+
+  .cap-group.cases h4 { color: var(--crimson); }
+  .cap-group.medical h4 { color: var(--steel); }
+  .cap-group.deadlines h4 { color: var(--brass); }
+  .cap-group.demand h4 { color: var(--plum); }
+  .cap-group.comms h4 { color: var(--sage); }
+  .cap-group.reporting h4 { color: var(--slate); }
+
+  .cap-list {
+    list-style: none;
+  }
+
+  .cap-list li {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    padding: 0.25rem 0;
+    transition: color 0.2s;
+    line-height: 1.5;
+  }
+
+  .cap-list li:hover { color: var(--text); }
+
+  .cap-list li::before {
+    content: '\2014';
+    margin-right: 0.5rem;
+    opacity: 0.3;
+  }
+
+  /* ── Appliance Section ── */
+  .appliance-box {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 2.5rem;
+    position: relative;
+  }
+
+  .appliance-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 500px 350px at 50% 50%, var(--crimson-glow), transparent);
+    opacity: 0.5;
+  }
+
+  .appliance-content {
+    position: relative;
+    z-index: 1;
+    padding: 3rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .appliance-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .appliance-icon {
+    width: 120px;
+    height: 80px;
+    border: 2px solid var(--crimson-dim);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(176,48,48,0.04);
+    position: relative;
+  }
+
+  .appliance-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20%;
+    right: 20%;
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .appliance-icon-inner {
+    font-size: 1.8rem;
+    color: var(--crimson);
+    line-height: 1;
+  }
+
+  .appliance-pulse {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--crimson);
+    animation: pulse 2s infinite;
+  }
+
+  .pulse-dot:nth-child(2) { animation-delay: 0.3s; background: var(--brass); }
+  .pulse-dot:nth-child(3) { animation-delay: 0.6s; background: var(--sage); }
+
+  .pulse-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .appliance-details h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    margin-bottom: 1rem;
+  }
+
+  .appliance-details p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  .appliance-specs {
+    list-style: none;
+    margin-top: 1rem;
+  }
+
+  .appliance-specs li {
+    font-size: 0.82rem;
+    color: var(--text);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .appliance-specs li span:last-child {
+    color: var(--crimson);
+    font-weight: 500;
+  }
+
+  .privacy-callout {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--crimson-dim);
+    border-radius: 10px;
+    background: rgba(176,48,48,0.04);
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  /* ── Sample Document ── */
+  .sample-doc {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 2rem;
+    overflow-x: auto;
+  }
+
+  .sample-doc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sample-doc pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  .sample-doc .field { color: var(--steel); }
+  .sample-doc .value { color: var(--brass); }
+  .sample-doc .heading { color: var(--text-bright); font-weight: 500; }
+  .sample-doc .note { color: var(--text-dim); }
+  .sample-doc .divider { color: var(--slate-dim); }
+
+  /* ── Pull Quote ── */
+  .pull-quote {
+    border-left: 2px solid var(--crimson-dim);
+    padding: 1.5rem 2rem;
+    margin: 3rem 0;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  .pull-quote cite {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-style: normal;
+    color: var(--text-dim);
+    margin-top: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Comparison ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .compare-col {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .compare-col.before {
+    border-color: var(--crimson-dim);
+  }
+
+  .compare-col.after {
+    border-color: var(--brass-dim);
+  }
+
+  .compare-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+
+  .compare-col.before .compare-label { color: var(--crimson); }
+  .compare-col.after .compare-label { color: var(--brass); }
+
+  .compare-item {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    line-height: 1.5;
+  }
+
+  .compare-item:last-child { border-bottom: none; }
+
+  .compare-col.before .compare-item::before {
+    content: '\00d7';
+    color: var(--crimson-dim);
+    margin-right: 0.6rem;
+    font-weight: 600;
+  }
+
+  .compare-col.after .compare-item::before {
+    content: '\2192';
+    color: var(--brass);
+    margin-right: 0.6rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .footer p {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+
+  .footer a {
+    color: var(--crimson);
+    text-decoration: none;
+  }
+
+  /* ── Scroll Animations ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .section { padding: 3.5rem 1.25rem; }
+    .timeline-step { grid-template-columns: 80px 30px 1fr; }
+    .appliance-content { grid-template-columns: 1fr; gap: 2rem; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .diagram-content { padding: 2rem 1rem; }
+    .d-node { min-width: 85px; font-size: 0.7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-label">Iron Case</div>
+    <h1>Your Firm, <em>One System</em></h1>
+    <p class="hero-sub">
+      You write plain, organized notes about your cases. An intelligent system reads them,
+      tracks your deadlines, chases down medical records, drafts demands, and keeps the operational
+      chaos of a PI firm from eating your billable hours. One box. No subscriptions. Your data stays yours.
+    </p>
+    <div class="scroll-hint">Scroll to see how it works</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ 01 · YOUR RECORDS ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">01 — The Foundation</div>
+    <h2 class="section-title">Your Records Drive Everything</h2>
+    <p class="section-desc">
+      The system understands a handful of document types. Each one has a clear structure &mdash;
+      like a well-organized case file, but written as natural notes. You fill in what you know,
+      and the system knows what to do with it.
+    </p>
+  </div>
+
+  <div class="doc-grid reveal">
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(176,48,48,0.12); color: var(--crimson); font-size: 1.2rem;">&#9878;</div>
+      <h3>Client Intake</h3>
+      <p>New client information, accident details, injuries sustained, insurance carriers, at-fault parties, initial case assessment.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">accident date</span>
+        <span class="doc-tag">injuries</span>
+        <span class="doc-tag">insurance info</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(96,128,160,0.12); color: var(--steel); font-size: 1.2rem;">&#9782;</div>
+      <h3>Case File</h3>
+      <p>Case status, opposing counsel, court dates, settlement offers, liability assessment, coverage limits, negotiation history.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">case status</span>
+        <span class="doc-tag">opposing counsel</span>
+        <span class="doc-tag">deadlines</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(128,96,152,0.12); color: var(--plum); font-size: 1.2rem;">&#9764;</div>
+      <h3>Medical Records</h3>
+      <p>Treatment history, provider bills, doctor narratives, lien tracking, surgery reports, ongoing treatment notes.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">providers</span>
+        <span class="doc-tag">bills</span>
+        <span class="doc-tag">lien amounts</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(192,152,44,0.12); color: var(--brass); font-size: 1.2rem;">&#9998;</div>
+      <h3>Demand Package</h3>
+      <p>Demand letters, evidence compilation, medical bill summaries, lost wage calculations, pain and suffering multipliers.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">total damages</span>
+        <span class="doc-tag">demand amount</span>
+        <span class="doc-tag">evidence list</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(80,128,96,0.12); color: var(--sage); font-size: 1.2rem;">&#9200;</div>
+      <h3>Calendar &amp; Deadlines</h3>
+      <p>Statute of limitations dates, deposition scheduling, filing deadlines, court appearances, discovery cutoffs.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">statute dates</span>
+        <span class="doc-tag">court dates</span>
+        <span class="doc-tag">deposition schedule</span>
+      </div>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon" style="background: rgba(96,112,128,0.12); color: var(--slate); font-size: 1.2rem;">&#9745;</div>
+      <h3>Task Request</h3>
+      <p>Anything you need done &mdash; follow up with an adjuster, request medical records from a provider, prepare a demand, draft a complaint.</p>
+      <div class="doc-meta">
+        <span class="doc-tag">priority</span>
+        <span class="doc-tag">due date</span>
+        <span class="doc-tag">case reference</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sample-doc reveal" style="margin-top:2rem;">
+    <div class="sample-doc-title">What a task request actually looks like</div>
+    <pre><span class="divider">---</span>
+<span class="field">priority</span>: <span class="value">high</span>
+<span class="field">due</span>: <span class="value">today</span>
+<span class="field">case</span>: <span class="value">Garcia v. State Farm</span>
+<span class="field">assigned</span>: <span class="value">system</span>
+<span class="divider">---</span>
+
+<span class="heading"># Follow Up on Outstanding Medical Records</span>
+
+<span class="note">Dr. Patel's office hasn't sent the MRI report from January.</span>
+<span class="note">We also need the updated treatment plan from Valley Orthopedic.</span>
+<span class="note">Send follow-up requests to both. If no response in 48 hours,</span>
+<span class="note">flag it for me so I can call them directly.</span>
+<span class="note">The demand needs to go out next week.</span></pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 02 · HOW YOU INTERACT ══════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">02 — Talking to the System</div>
+    <h2 class="section-title">Use It However You Work</h2>
+    <p class="section-desc">
+      You don't have to learn new software. Dictate a note from the courthouse parking lot.
+      Type at your desk between client meetings. The system picks up what you need
+      from wherever you are.
+    </p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="timeline-step">
+      <div class="t-when">On the move</div>
+      <div class="t-line"><div class="t-dot crimson"></div></div>
+      <div class="t-body">
+        <h4>Your Phone or Tablet</h4>
+        <p>Dictate case notes from the courthouse parking lot. Update a client file
+        between depositions. Check which deadlines are coming up this week.
+        Works offline &mdash; it syncs when you're back in range.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Hands-free</div>
+      <div class="t-line"><div class="t-dot brass"></div></div>
+      <div class="t-body">
+        <h4>Voice Commands</h4>
+        <p>"State Farm still hasn't responded on the Garcia case. Send another follow-up
+        and put it on my list if they don't reply by Friday." The system creates the task
+        and starts working before you're back at the office.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">At the desk</div>
+      <div class="t-line"><div class="t-dot steel"></div></div>
+      <div class="t-body">
+        <h4>Your Computer</h4>
+        <p>Full case review. Build demand packages, review settlement calculations,
+        approve outgoing correspondence. Everything in one place &mdash; no toggling
+        between five different programs.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Quick update</div>
+      <div class="t-line"><div class="t-dot plum"></div></div>
+      <div class="t-body">
+        <h4>Messaging</h4>
+        <p>Text the system: "What's the statute date on the Thompson case?"
+        It reads the message, checks the case file, and texts you back within seconds.
+        No logging in. No searching through folders.</p>
+      </div>
+    </div>
+
+    <div class="timeline-step">
+      <div class="t-when">Automatic</div>
+      <div class="t-line"><div class="t-dot sage"></div></div>
+      <div class="t-body">
+        <h4>Scheduled Tasks</h4>
+        <p>Things that should happen on their own &mdash; check for approaching statute deadlines
+        every morning, follow up on unanswered medical record requests every week,
+        generate the case pipeline report every Monday.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 03 · THE COMMAND CENTER ═════════════════════════════ -->
+<section class="flow-section">
+  <div class="flow-container">
+    <div class="section-header reveal">
+      <div class="section-num">03 — How It All Connects</div>
+      <h2 class="section-title">The Command Center</h2>
+      <p class="section-desc">
+        Everything flows through one system. You put in what you need. The coordinator understands
+        PI law workflows and decides what to do. Everything gets documented and filed.
+      </p>
+    </div>
+
+    <div class="system-diagram reveal">
+      <div class="diagram-bg"></div>
+      <div class="diagram-content">
+
+        <!-- You -->
+        <div class="diagram-row">
+          <div class="d-label">You &mdash; wherever you are</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node crimson">Phone</div>
+          <div class="d-node crimson">Voice</div>
+          <div class="d-node crimson">Computer</div>
+          <div class="d-node crimson">Text</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- Your Records -->
+        <div class="diagram-row">
+          <div class="d-label">Your Records &mdash; organized case files the system understands</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node steel">Client Intakes</div>
+          <div class="d-node steel">Case Files</div>
+          <div class="d-node steel big">Medical Records</div>
+          <div class="d-node steel">Demand Packages</div>
+          <div class="d-node steel">Calendar</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- The Coordinator -->
+        <div class="diagram-row">
+          <div class="d-label">The Coordinator &mdash; AI assistant that understands PI law workflows</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node brass big">AI Assistant</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- Actions -->
+        <div class="diagram-row">
+          <div class="d-label">Actions &mdash; what gets done</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node plum">Draft a Demand</div>
+          <div class="d-node plum">Email an Adjuster</div>
+          <div class="d-node plum">Generate a Report</div>
+          <div class="d-node plum">Update Deadlines</div>
+        </div>
+
+        <div class="d-arrows"><span>&darr;</span><span>&darr;</span><span>&darr;</span><span>&darr;</span></div>
+
+        <!-- Documented Output -->
+        <div class="diagram-row">
+          <div class="d-label">Everything documented &mdash; filed, searchable, ready for court</div>
+        </div>
+        <div class="diagram-row">
+          <div class="d-node sage">Demand Packages</div>
+          <div class="d-node sage">Case Timelines</div>
+          <div class="d-node sage">Settlement Tracking</div>
+          <div class="d-node sage">Communication Log</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pull-quote reveal">
+      "Dictate case notes from the courthouse parking lot. By the time you get back to the office,
+      the medical records request is sent, the case file is updated, and the deadline is on your calendar."
+      <cite>&mdash; That's what the system does</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 04 · A DAY IN THE LIFE ═════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">04 — A Day in the Life</div>
+    <h2 class="section-title">Real Situations, Handled</h2>
+    <p class="section-desc">
+      These aren't hypotheticals. Every PI firm deals with exactly these situations
+      every single week. Here's how the system handles each one.
+    </p>
+  </div>
+
+  <div class="scenario-grid reveal">
+    <div class="scenario-card intake">
+      <div class="scenario-timing">&#9742; New Client Call</div>
+      <h4>New Client Calls About a Car Accident</h4>
+      <p>Potential client calls in. You jot down the basics: name, accident date, injuries, insurance carrier.
+      The system creates the intake, runs a conflict check against existing cases, generates an engagement letter,
+      and schedules the initial consultation. By the time you hang up, the file is half-built.</p>
+      <div class="scenario-who both">AI + You review &amp; approve</div>
+    </div>
+
+    <div class="scenario-card urgent">
+      <div class="scenario-timing">&#9888; Statute Alert &mdash; 30 days out</div>
+      <h4>Approaching Statute of Limitations</h4>
+      <p>The system flags a case that's 30 days from the statute deadline. It auto-drafts a complaint,
+      alerts your paralegal, creates a filing checklist, and puts it at the top of your morning briefing.
+      No case falls through the cracks because someone forgot to check a spreadsheet.</p>
+      <div class="scenario-who ai">AI &mdash; automatic alert</div>
+    </div>
+
+    <div class="scenario-card auto">
+      <div class="scenario-timing">&#8635; Runs automatically every week</div>
+      <h4>Medical Records Chase</h4>
+      <p>The system checks which providers haven't responded to records requests. It sends follow-up faxes
+      and emails automatically, tracks what's been requested vs. received vs. outstanding, and flags
+      cases where missing records are holding up the demand. No more sticky notes on your monitor.</p>
+      <div class="scenario-who ai">AI &mdash; automatic</div>
+    </div>
+
+    <div class="scenario-card demand">
+      <div class="scenario-timing">&#9998; Demand preparation</div>
+      <h4>Settlement Demand Package</h4>
+      <p>One command: "Prepare the demand for Garcia v. State Farm." The system compiles all medical bills,
+      builds a treatment timeline, calculates lost wages from the employment records, applies your multiplier,
+      and generates the complete demand package. You review, adjust the number, and send.</p>
+      <div class="scenario-who both">AI drafts + You finalize</div>
+    </div>
+
+    <div class="scenario-card daily">
+      <div class="scenario-timing">&#9788; Every morning at 7 AM</div>
+      <h4>Daily Case Review</h4>
+      <p>Before you've had your coffee, there's a briefing waiting: which cases need attention this week,
+      what deadlines are approaching, which adjusters haven't responded, what medical records came in overnight,
+      and which settlements are ready to close. Ten minutes and you know your entire caseload.</p>
+      <div class="scenario-who ai">AI &mdash; automatic</div>
+    </div>
+
+    <div class="scenario-card prep">
+      <div class="scenario-timing">&#9782; Before a deposition</div>
+      <h4>Deposition Prep</h4>
+      <p>The system organizes the client's medical records chronologically, generates a complete treatment timeline,
+      flags any gaps or inconsistencies between provider records, and creates a deposition outline
+      with key dates and questions. You walk in prepared without spending the whole night before assembling it.</p>
+      <div class="scenario-who both">AI assembles + You prepare</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 05 · CAPABILITIES ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">05 — What It Handles</div>
+    <h2 class="section-title">Built for PI Firms</h2>
+    <p class="section-desc">
+      Under the hood, the system has dozens of capabilities. Here's what matters to you &mdash;
+      grouped by the parts of your practice they support.
+    </p>
+  </div>
+
+  <div class="cap-map reveal">
+    <div class="cap-group cases">
+      <h4>Case Management</h4>
+      <ul class="cap-list">
+        <li>Client intake and file creation</li>
+        <li>Case status tracking and assignment</li>
+        <li>Conflict of interest checks</li>
+        <li>Engagement letter generation</li>
+        <li>Referral source tracking</li>
+      </ul>
+    </div>
+
+    <div class="cap-group medical">
+      <h4>Medical Records</h4>
+      <ul class="cap-list">
+        <li>Records request and follow-up</li>
+        <li>Provider bill tracking</li>
+        <li>Lien calculation and monitoring</li>
+        <li>Treatment timeline assembly</li>
+        <li>Gap and inconsistency detection</li>
+      </ul>
+    </div>
+
+    <div class="cap-group deadlines">
+      <h4>Deadlines &amp; Calendar</h4>
+      <ul class="cap-list">
+        <li>Statute of limitations tracking</li>
+        <li>Court date management</li>
+        <li>Deposition scheduling</li>
+        <li>Discovery cutoff alerts</li>
+        <li>Multi-tier deadline warnings</li>
+      </ul>
+    </div>
+
+    <div class="cap-group demand">
+      <h4>Demand &amp; Settlement</h4>
+      <ul class="cap-list">
+        <li>Demand letter drafting</li>
+        <li>Damages calculation</li>
+        <li>Lost wage compilation</li>
+        <li>Settlement negotiation tracking</li>
+        <li>Disbursement sheet generation</li>
+      </ul>
+    </div>
+
+    <div class="cap-group comms">
+      <h4>Client Communication</h4>
+      <ul class="cap-list">
+        <li>Case status update letters</li>
+        <li>Appointment reminders</li>
+        <li>Document request follow-ups</li>
+        <li>Adjuster correspondence tracking</li>
+        <li>Opposing counsel communication log</li>
+      </ul>
+    </div>
+
+    <div class="cap-group reporting">
+      <h4>Reporting</h4>
+      <ul class="cap-list">
+        <li>Case pipeline overview</li>
+        <li>Revenue and fee tracking</li>
+        <li>Referral source analysis</li>
+        <li>Settlement average reporting</li>
+        <li>Caseload balance monitoring</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════ 06 · BEFORE & AFTER ════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">06 — The Difference</div>
+    <h2 class="section-title">Before and After</h2>
+    <p class="section-desc">
+      You know the friction. You live with it every week.
+      Here's what changes.
+    </p>
+  </div>
+
+  <div class="compare-grid reveal">
+    <div class="compare-col before">
+      <div class="compare-label">How it works now</div>
+      <div class="compare-item">Manually tracking statute deadlines in a spreadsheet and hoping nothing slips</div>
+      <div class="compare-item">Calling providers three times to get medical records, then losing track of who sent what</div>
+      <div class="compare-item">Calculating total damages by hand from a stack of bills and pay stubs</div>
+      <div class="compare-item">Missing follow-ups with adjusters because there's no system to track touchpoints</div>
+      <div class="compare-item">Spending the night before a deposition assembling a treatment timeline</div>
+      <div class="compare-item">New client intake paperwork takes half a day of administrative work</div>
+      <div class="compare-item">No clear picture of your case pipeline or which cases need attention</div>
+    </div>
+
+    <div class="compare-col after">
+      <div class="compare-label">How it works with Iron Case</div>
+      <div class="compare-item">Automatic alerts at 90, 60, and 30 days before every statute expiration</div>
+      <div class="compare-item">Auto-request, auto-follow-up, auto-organize &mdash; you see exactly what's outstanding</div>
+      <div class="compare-item">One command generates the complete demand calculation with itemized breakdown</div>
+      <div class="compare-item">Every adjuster touchpoint tracked, every follow-up scheduled, nothing forgotten</div>
+      <div class="compare-item">Chronological timeline generated instantly with inconsistencies flagged</div>
+      <div class="compare-item">Jot the basics on your phone &mdash; conflict check, engagement letter, and file created automatically</div>
+      <div class="compare-item">Morning briefing shows every case that needs attention, every deadline approaching</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 07 · THE APPLIANCE ═════════════════════════════════ -->
+<section class="section">
+  <div class="section-header reveal">
+    <div class="section-num">07 — The Appliance</div>
+    <h2 class="section-title">A Box in Your Office</h2>
+    <p class="section-desc">
+      This isn't another cloud-based case management subscription that someone else controls.
+      It's a small, quiet machine that sits in your office and runs everything.
+      Your data. Your system. Always on.
+    </p>
+  </div>
+
+  <div class="appliance-box reveal">
+    <div class="appliance-bg"></div>
+    <div class="appliance-content">
+      <div class="appliance-visual">
+        <div class="appliance-icon">
+          <div class="appliance-icon-inner">&#9618;</div>
+        </div>
+        <div class="appliance-pulse">
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <div class="pulse-dot"></div>
+          <span class="pulse-label">Always running</span>
+        </div>
+      </div>
+      <div class="appliance-details">
+        <h3>Your Command Center</h3>
+        <p>
+          A compact machine &mdash; roughly the size of a thick paperback &mdash; that sits on a shelf
+          or behind your monitor. It runs the AI assistant, stores your case files, sends the correspondence,
+          generates the demands and reports.
+        </p>
+        <p>
+          No cloud dependency for your client data. No per-seat licensing. No vendor deciding
+          to triple their subscription next year. No monthly SaaS fees. You own it.
+        </p>
+        <ul class="appliance-specs">
+          <li><span>Client data stays</span> <span>In your office</span></li>
+          <li><span>Monthly software fees</span> <span>None</span></li>
+          <li><span>Setup</span> <span>Plug in and go</span></li>
+          <li><span>AI processing</span> <span>On-device + cloud hybrid</span></li>
+          <li><span>Internet required</span> <span>For emails and faxes only</span></li>
+          <li><span>Storage</span> <span>HIPAA-compliant, encrypted</span></li>
+          <li><span>Backup</span> <span>Automatic, encrypted</span></li>
+        </ul>
+        <div class="privacy-callout">
+          Your client data never leaves your office. Period. Attorney-client privilege isn't something
+          you should have to trust a cloud provider to protect. Case files, medical records, settlement details &mdash;
+          it all stays on hardware you control, in a room you lock.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ 08 · THE VISION ════════════════════════════════════ -->
+<section class="section" style="padding-bottom: 2rem;">
+  <div class="section-header reveal">
+    <div class="section-num">08 — The Vision</div>
+    <h2 class="section-title">Write It. Speak It. It's Handled.</h2>
+    <p class="section-desc">
+      The distance between "I need this done" and "it's done" should be as short as possible.
+      That's what this system closes. You should be in court, meeting clients, and building your practice &mdash;
+      not buried in administrative work.
+    </p>
+  </div>
+
+  <div class="pull-quote reveal">
+    A new client call becomes a case file. A missed deadline becomes impossible. A stack of medical bills
+    becomes a calculated demand. All through simple notes you write the way you already think &mdash;
+    on your phone, at your desk, or out loud while you walk out of the courthouse.
+    <cite>&mdash; One system, no juggling</cite>
+  </div>
+
+  <div class="pull-quote reveal" style="border-left-color: var(--brass-dim);">
+    The real value isn't the technology. It's the cases you don't lose because a deadline slipped.
+    It's the demands that go out faster because the records were already organized. It's the adjusters
+    who take you seriously because every follow-up arrives on time. It's the clients who trust you
+    because nothing ever falls through the cracks.
+    <cite>&mdash; What it means for your practice</cite>
+  </div>
+
+  <div class="sample-doc reveal">
+    <div class="sample-doc-title">Full lifecycle: new PI case from intake through settlement</div>
+    <pre>
+<span class="heading">You write:</span>    <span class="value">"New client. Maria Garcia. Rear-ended on the 405 on January 12.</span>
+<span class="value">               Neck and back injuries. Treating with Dr. Patel at Valley Orthopedic.</span>
+<span class="value">               State Farm is the other driver's carrier. Policy limit unknown.</span>
+<span class="value">               Two-year statute. She's still treating."</span>
+
+<span class="heading">The system:</span>  <span class="note">Creates client intake for Maria Garcia</span>
+              <span class="note">Runs conflict check against all existing cases and parties</span>
+              <span class="note">Generates engagement letter and fee agreement for your review</span>
+              <span class="note">Sets statute of limitations: January 12, 2028</span>
+              <span class="note">Creates alerts at 90, 60, and 30 days before statute</span>
+              <span class="note">Sends medical records request to Dr. Patel / Valley Orthopedic</span>
+              <span class="note">Opens case file: Garcia v. State Farm</span>
+
+<span class="heading">Ongoing:</span>     <span class="note">Tracks every medical visit and bill as records arrive</span>
+              <span class="note">Follows up with Valley Orthopedic if records are late</span>
+              <span class="note">Builds treatment timeline automatically</span>
+              <span class="note">Monitors for maximum medical improvement</span>
+
+<span class="heading">You say:</span>     <span class="value">"Garcia is done treating. Prepare the demand."</span>
+
+<span class="heading">The system:</span>  <span class="note">Compiles all medical bills: $34,200 in treatment</span>
+              <span class="note">Calculates lost wages from employment records: $8,400</span>
+              <span class="note">Generates treatment timeline with provider summary</span>
+              <span class="note">Drafts demand letter with damages breakdown</span>
+              <span class="note">Sends you the complete package for review</span>
+
+<span class="heading">You review:</span>  <span class="value">Adjust the demand number. Approve. Send.</span>
+
+<span class="heading">The system:</span>  <span class="note">Sends demand to State Farm adjuster</span>
+              <span class="note">Starts 30-day response clock</span>
+              <span class="note">Logs every negotiation touchpoint going forward</span>
+              <span class="note">Alerts you when a response comes in or the deadline passes</span>
+              <span class="note">Tracks settlement through to disbursement</span></pre>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═════════════════════════════════════════ -->
+<div class="footer">
+  <p>Soederpop Systems &mdash; <a href="https://www.soederpop.com">soederpop.com</a></p>
+  <p style="margin-top:0.5rem; font-size:0.6rem; opacity:0.5;">Version: Iron Case</p>
+</div>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1,
+  rootMargin: '0px 0px -50px 0px'
+});
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
